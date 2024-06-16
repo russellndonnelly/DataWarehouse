@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{C9674DCB-5085-4A16-B785-4C70DD1589BD}") = "Datawarehouse", "Datawarehouse\Datawarehouse.dtproj", "{168712E3-B093-4A88-BA55-A90F65400A74}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SetupFiles", "SetupFiles", "{333EC46D-3533-43BD-AB40-BEFCB72911CB}"
+	ProjectSection(SolutionItems) = preProject
+		SetupDatabase.sql = SetupDatabase.sql
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Development|Default = Development|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{168712E3-B093-4A88-BA55-A90F65400A74}.Development|Default.ActiveCfg = Development
+		{168712E3-B093-4A88-BA55-A90F65400A74}.Development|Default.Build.0 = Development
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {12006DC7-EF93-4A01-B538-467EA2D9FA2E}
+	EndGlobalSection
+EndGlobal

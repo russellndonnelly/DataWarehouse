@@ -1,0 +1,2991 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="6/4/2024 10:58:00 PM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="RUSSELLASUS"
+  DTS:CreatorName="RUSSELLASUS\russell.n.donnelly"
+  DTS:DTSID="{5685DC43-F7F1-49D1-B04D-2D157E597CC6}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="16.0.5556.0"
+  DTS:LocaleID="1033"
+  DTS:ObjectName="LoadSCDtemplate"
+  DTS:PackageType="5"
+  DTS:VersionBuild="271"
+  DTS:VersionGUID="{DF3D2484-9671-4783-946A-1BE336145970}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[AdventureWorks2022]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{554393C2-2F09-44D0-82B3-3C3AF7160303}"
+      DTS:ObjectName="AdventureWorks2022">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=RUSSELLASUS\MSSQLSER_2022MDX;Initial Catalog=AdventureWorks2022;Provider=SQLOLEDB.1;Integrated Security=SSPI;Application Name=SSIS-Package-{554393C2-2F09-44D0-82B3-3C3AF7160303}RUSSELLASUS\MSSQLSER_2022MDX.AdventureWorks2022;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[AdventureWorksDWExtended]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{491675FB-4A47-43C8-88D3-C6890C9E484C}"
+      DTS:ObjectName="AdventureWorksDWExtended">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=RUSSELLASUS\MSSQLSER_2022MDX;Initial Catalog=AdventureWorksDWExtended;Provider=SQLOLEDB.1;Integrated Security=SSPI;Application Name=SSIS-Package-{491675FB-4A47-43C8-88D3-C6890C9E484C}RUSSELLASUS\MSSQLSER_2022MDX.AdventureWorksDWExtended;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:LogProviders>
+    <DTS:LogProvider
+      DTS:ConfigString="AdventureWorksDWExtended"
+      DTS:CreationName="Microsoft.LogProviderSQLServer"
+      DTS:Description="Writes log entries for events to a SQL Server database"
+      DTS:DTSID="{28B3E5BA-6EC2-4928-AC0E-3834DB87EAFA}"
+      DTS:ObjectName="SSIS log provider for SQL Server">
+      <DTS:ObjectData>
+        <InnerObject />
+      </DTS:ObjectData>
+    </DTS:LogProvider>
+  </DTS:LogProviders>
+  <DTS:Variables>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{BEE0EC84-3F1A-4914-A424-E94AA1F35186}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="AuditId">
+      <DTS:VariableValue
+        DTS:DataType="3">0</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{57BCE6E4-5DB4-41A4-BE42-DDEF0866EC8C}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="RowCount">
+      <DTS:VariableValue
+        DTS:DataType="3">0</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{B14FD117-D9DD-4874-A656-9A86A4570DEA}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="Status">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{435D5B91-DE24-4FC0-9AAC-B2CEEB09E084}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="TableName">
+      <DTS:VariableValue
+        DTS:DataType="8">stage.DimCustomer</DTS:VariableValue>
+    </DTS:Variable>
+  </DTS:Variables>
+  <DTS:LoggingOptions
+    DTS:FilterKind="0"
+    DTS:LoggingMode="1">
+    <DTS:Property
+      DTS:DataType="8"
+      DTS:Name="EventFilter">1,7,OnError</DTS:Property>
+    <DTS:Property
+      DTS:EventName="Diagnostic"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="DiagnosticEx"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnError"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnExecStatusChanged"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnInformation"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPipelinePostComponentCall"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPipelinePostEndOfRowset"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPipelinePostPrimeOutput"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPipelinePreComponentCall"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPipelinePreEndOfRowset"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPipelinePrePrimeOutput"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPipelineRowsSent"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPostExecute"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPostValidate"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPreExecute"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPreValidate"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnProgress"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnQueryCancel"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnTaskFailed"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnVariableValueChanged"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnWarning"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:SelectedLogProviders>
+      <DTS:SelectedLogProvider
+        DTS:InstanceID="{28B3E5BA-6EC2-4928-AC0E-3834DB87EAFA}" />
+    </DTS:SelectedLogProviders>
+  </DTS:LoggingOptions>
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\AuditCreateRow"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{EAE528C4-2BD4-4D34-B50C-C14497F95DFE}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="AuditCreateRow"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:LoggingOptions
+        DTS:FilterKind="0" />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{491675FB-4A47-43C8-88D3-C6890C9E484C}"
+          SQLTask:SqlStatementSource="USE [AdventureWorksDWExtended]&#xA;EXEC [dbo].[AuditCreateRow] @TableName=?,@PackageName=?,@Status=?, @AuditId=? OUTPUT;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="User::TableName"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="129"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="1"
+            SQLTask:DtsVariableName="System::PackageName"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="129"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="2"
+            SQLTask:DtsVariableName="User::Status"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="129"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="3"
+            SQLTask:DtsVariableName="User::AuditId"
+            SQLTask:ParameterDirection="Output"
+            SQLTask:DataType="3"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\AuditUpdateRow Completed"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{776e992c-a6ae-454d-b517-ccc77fc969ba}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="AuditUpdateRow Completed"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="2">
+      <DTS:Variables />
+      <DTS:LoggingOptions
+        DTS:FilterKind="0" />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{491675FB-4A47-43C8-88D3-C6890C9E484C}"
+          SQLTask:SqlStatementSource="EXEC [AdventureWorksDWExtended].[dbo].[AuditUpdateRow] @AuditId=?, @Status='Completed',@RowCount=?;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="User::AuditId"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="3"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="1"
+            SQLTask:DtsVariableName="User::RowCount"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="3"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Check existence of stage schema"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{4D22660D-A45E-4760-AD38-290F2B9A9ECE}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Check existence of stage schema"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:LoggingOptions
+        DTS:FilterKind="0" />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{491675FB-4A47-43C8-88D3-C6890C9E484C}"
+          SQLTask:SqlStatementSource="USE AdventureWorksDWExtended&#xA;GO&#xA;&#xA;IF NOT EXISTS (SELECT SCHEMA_ID FROM sys.schemas WHERE [name] = 'stage')&#xA;&#x9;exec('CREATE SCHEMA stage [AdventureWorksDWExtended] AUTHORIZATION [dbo]');&#xA;GO" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Drop and recreate SCD table"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{FBB4895E-E5D0-40A8-BF83-124206B3C4AC}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Drop and recreate SCD table"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{491675FB-4A47-43C8-88D3-C6890C9E484C}"
+          SQLTask:SqlStatementSource="IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DimCustomer]') AND type in (N'U'))&#xA;DROP TABLE [dbo].[DimCustomer]&#xA;GO&#xA;&#xA;SET ANSI_NULLS ON&#xA;GO&#xA;&#xA;SET QUOTED_IDENTIFIER ON&#xA;GO&#xA;&#xA;CREATE TABLE [dbo].[DimCustomer]&#xA;(&#xA;&#x9;[CustomerID_sk] [int] IDENTITY(1,1) NOT NULL,&#xA;&#x9;[BusinessEntityID_nk] [int] NOT NULL,&#xA;&#x9;[Title] [nvarchar](50) NULL,&#xA;&#x9;[FirstName] [nvarchar](50) NULL,&#xA;&#x9;[MiddleName] [nvarchar](50) NULL,&#xA;&#x9;[LastName] [nvarchar](50) NULL,&#xA;&#x9;[PhoneNumber_curr] [nvarchar](25) NULL,&#x9;&#x9;--current phone number (type 3 or 6)&#xA;&#x9;[PhoneNumber_prev] [nvarchar](25) NULL,&#x9;&#x9;--previous phone number (type 3 or 6)&#xA;&#x9;[PhoneType] [nvarchar](50) NULL,&#xA;&#x9;[EffectiveDate] [datetime] NULL,&#x9;&#x9;&#x9;--effective date for the row (type 2, 1 day plus expiration date of previous historical row)&#xA;&#x9;[ExpirationDate] [datetime] NULL,&#x9;&#x9;&#x9;--expiration date for the row (type 2, 1 day minus effective date of next historical row)&#xA;&#x9;[DateInserted] [datetime] NULL,&#xA;&#x9;[DateUpdated] [datetime] NULL,&#xA;&#x9;[IsCurrentRow] [bit] NULL&#xA;) ON [PRIMARY]&#xA;GO" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Drop stage table"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{f2fc03f1-6190-44a2-a445-345dfec3055c}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Drop stage table"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="1">
+      <DTS:Variables />
+      <DTS:LoggingOptions
+        DTS:FilterKind="0" />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{491675FB-4A47-43C8-88D3-C6890C9E484C}"
+          SQLTask:SqlStatementSource="/***************************************************************************&#xA;Purpose:&#x9;&#x9;Drops staging table for dimension load on prod server only&#xA;*****************************************************************************/&#xA;IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[stage].[DimCustomer]') AND type in (N'U'))&#xA; DROP TABLE [stage].[DimCustomer]&#xA;GO&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\load stage"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:DelayValidation="True"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{4E25D09B-83AB-4CB5-B4DF-6D6DEEA2CC33}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="load stage"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:LoggingOptions
+        DTS:FilterKind="0"
+        DTS:LoggingMode="1">
+        <DTS:Property
+          DTS:DataType="8"
+          DTS:Name="EventFilter">1,16,BufferSizeTuning</DTS:Property>
+        <DTS:Property
+          DTS:EventName="BufferSizeTuning"
+          DTS:Name="ColumnFilter">
+          <DTS:Property
+            DTS:Name="Computer">-1</DTS:Property>
+          <DTS:Property
+            DTS:Name="Operator">-1</DTS:Property>
+          <DTS:Property
+            DTS:Name="SourceName">-1</DTS:Property>
+          <DTS:Property
+            DTS:Name="SourceID">-1</DTS:Property>
+          <DTS:Property
+            DTS:Name="ExecutionID">-1</DTS:Property>
+          <DTS:Property
+            DTS:Name="MessageText">-1</DTS:Property>
+          <DTS:Property
+            DTS:Name="DataBytes">-1</DTS:Property>
+        </DTS:Property>
+        <DTS:SelectedLogProviders>
+          <DTS:SelectedLogProvider
+            DTS:InstanceID="{28B3E5BA-6EC2-4928-AC0E-3834DB87EAFA}" />
+        </DTS:SelectedLogProviders>
+      </DTS:LoggingOptions>
+      <DTS:ObjectData>
+        <pipeline
+          defaultBufferMaxRows="1900"
+          defaultBufferSize="1048576"
+          engineThreads="6"
+          version="1">
+          <components>
+            <component
+              refId="Package\load stage\bdd"
+              componentClassID="Microsoft.BDD"
+              contactInfo="Balanced Data Distributor;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Evaluates and directs rows in a dataset to multiple destinations."
+              name="bdd">
+              <inputs>
+                <input
+                  refId="Package\load stage\bdd.Inputs[Balanced Data Distributor Input]"
+                  description="Input to the Balanced Data      Distributor Transformation"
+                  name="Balanced Data Distributor Input">
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 1]"
+                  deleteOutputOnPathDetached="true"
+                  exclusionGroup="1"
+                  name="Balanced Data Distributor Output 1"
+                  synchronousInputId="Package\load stage\bdd.Inputs[Balanced Data Distributor Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 2]"
+                  deleteOutputOnPathDetached="true"
+                  exclusionGroup="1"
+                  name="Balanced Data Distributor Output 2"
+                  synchronousInputId="Package\load stage\bdd.Inputs[Balanced Data Distributor Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 3]"
+                  deleteOutputOnPathDetached="true"
+                  exclusionGroup="1"
+                  name="Balanced Data Distributor Output 3"
+                  synchronousInputId="Package\load stage\bdd.Inputs[Balanced Data Distributor Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 4]"
+                  deleteOutputOnPathDetached="true"
+                  exclusionGroup="1"
+                  name="Balanced Data Distributor Output 4"
+                  synchronousInputId="Package\load stage\bdd.Inputs[Balanced Data Distributor Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 5]"
+                  deleteOutputOnPathDetached="true"
+                  exclusionGroup="1"
+                  name="Balanced Data Distributor Output 5"
+                  synchronousInputId="Package\load stage\bdd.Inputs[Balanced Data Distributor Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 6]"
+                  dangling="true"
+                  deleteOutputOnPathDetached="true"
+                  exclusionGroup="1"
+                  name="Balanced Data Distributor Output 6"
+                  synchronousInputId="Package\load stage\bdd.Inputs[Balanced Data Distributor Input]">
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\load stage\OLE DB Destination 1"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="OLE DB Destination 1"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[stage].[DimCustomer]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">true</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">1899</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\load stage\OLE DB Destination 1.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[AdventureWorksDWExtended]"
+                  connectionManagerRefId="Package.ConnectionManagers[AdventureWorksDWExtended]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[BusinessEntityID_nk]"
+                      cachedDataType="i4"
+                      cachedName="BusinessEntityID_nk"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[Title]"
+                      cachedDataType="wstr"
+                      cachedLength="8"
+                      cachedName="Title"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[FirstName]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="FirstName"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[MiddleName]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="MiddleName"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[LastName]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="LastName"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[PhoneNumber]"
+                      cachedDataType="wstr"
+                      cachedLength="25"
+                      cachedName="PhoneNumber"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[PhoneType]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="PhoneType"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[ModifiedDate]"
+                      cachedDataType="wstr"
+                      cachedLength="10"
+                      cachedName="ModifiedDate"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      dataType="i4"
+                      name="BusinessEntityID_nk" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      dataType="wstr"
+                      length="50"
+                      name="Title" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      dataType="wstr"
+                      length="50"
+                      name="FirstName" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      dataType="wstr"
+                      length="50"
+                      name="MiddleName" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      dataType="wstr"
+                      length="50"
+                      name="LastName" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      dataType="wstr"
+                      length="25"
+                      name="PhoneNumber" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      dataType="wstr"
+                      length="50"
+                      name="PhoneType" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      dataType="dbTimeStamp"
+                      name="ModifiedDate" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\load stage\OLE DB Destination 1.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\load stage\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\load stage\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\load stage\OLE DB Destination 2"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="OLE DB Destination 2"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[stage].[DimCustomer]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">true</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">1899</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\load stage\OLE DB Destination 2.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[AdventureWorksDWExtended]"
+                  connectionManagerRefId="Package.ConnectionManagers[AdventureWorksDWExtended]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[BusinessEntityID_nk]"
+                      cachedDataType="i4"
+                      cachedName="BusinessEntityID_nk"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[Title]"
+                      cachedDataType="wstr"
+                      cachedLength="8"
+                      cachedName="Title"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[FirstName]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="FirstName"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[MiddleName]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="MiddleName"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[LastName]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="LastName"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[PhoneNumber]"
+                      cachedDataType="wstr"
+                      cachedLength="25"
+                      cachedName="PhoneNumber"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[PhoneType]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="PhoneType"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[ModifiedDate]"
+                      cachedDataType="wstr"
+                      cachedLength="10"
+                      cachedName="ModifiedDate"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      dataType="i4"
+                      name="BusinessEntityID_nk" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      dataType="wstr"
+                      length="50"
+                      name="Title" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      dataType="wstr"
+                      length="50"
+                      name="FirstName" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      dataType="wstr"
+                      length="50"
+                      name="MiddleName" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      dataType="wstr"
+                      length="50"
+                      name="LastName" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      dataType="wstr"
+                      length="25"
+                      name="PhoneNumber" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      dataType="wstr"
+                      length="50"
+                      name="PhoneType" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      dataType="dbTimeStamp"
+                      name="ModifiedDate" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\load stage\OLE DB Destination 2.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Destination 2.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\load stage\OLE DB Destination 2.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Destination 2.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\load stage\OLE DB Destination 2.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\load stage\OLE DB Destination 3"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="OLE DB Destination 3"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[stage].[DimCustomer]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">true</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">1899</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\load stage\OLE DB Destination 3.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[AdventureWorksDWExtended]"
+                  connectionManagerRefId="Package.ConnectionManagers[AdventureWorksDWExtended]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[BusinessEntityID_nk]"
+                      cachedDataType="i4"
+                      cachedName="BusinessEntityID_nk"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[Title]"
+                      cachedDataType="wstr"
+                      cachedLength="8"
+                      cachedName="Title"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[FirstName]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="FirstName"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[MiddleName]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="MiddleName"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[LastName]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="LastName"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[PhoneNumber]"
+                      cachedDataType="wstr"
+                      cachedLength="25"
+                      cachedName="PhoneNumber"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[PhoneType]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="PhoneType"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[ModifiedDate]"
+                      cachedDataType="wstr"
+                      cachedLength="10"
+                      cachedName="ModifiedDate"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      dataType="i4"
+                      name="BusinessEntityID_nk" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      dataType="wstr"
+                      length="50"
+                      name="Title" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      dataType="wstr"
+                      length="50"
+                      name="FirstName" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      dataType="wstr"
+                      length="50"
+                      name="MiddleName" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      dataType="wstr"
+                      length="50"
+                      name="LastName" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      dataType="wstr"
+                      length="25"
+                      name="PhoneNumber" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      dataType="wstr"
+                      length="50"
+                      name="PhoneType" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      dataType="dbTimeStamp"
+                      name="ModifiedDate" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\load stage\OLE DB Destination 3.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Destination 3.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\load stage\OLE DB Destination 3.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Destination 3.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\load stage\OLE DB Destination 3.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\load stage\OLE DB Destination 4"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="OLE DB Destination 4"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[stage].[DimCustomer]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">true</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">1899</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\load stage\OLE DB Destination 4.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[AdventureWorksDWExtended]"
+                  connectionManagerRefId="Package.ConnectionManagers[AdventureWorksDWExtended]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[BusinessEntityID_nk]"
+                      cachedDataType="i4"
+                      cachedName="BusinessEntityID_nk"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[Title]"
+                      cachedDataType="wstr"
+                      cachedLength="8"
+                      cachedName="Title"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[FirstName]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="FirstName"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[MiddleName]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="MiddleName"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[LastName]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="LastName"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[PhoneNumber]"
+                      cachedDataType="wstr"
+                      cachedLength="25"
+                      cachedName="PhoneNumber"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[PhoneType]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="PhoneType"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[ModifiedDate]"
+                      cachedDataType="wstr"
+                      cachedLength="10"
+                      cachedName="ModifiedDate"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      dataType="i4"
+                      name="BusinessEntityID_nk" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      dataType="wstr"
+                      length="50"
+                      name="Title" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      dataType="wstr"
+                      length="50"
+                      name="FirstName" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      dataType="wstr"
+                      length="50"
+                      name="MiddleName" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      dataType="wstr"
+                      length="50"
+                      name="LastName" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      dataType="wstr"
+                      length="25"
+                      name="PhoneNumber" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      dataType="wstr"
+                      length="50"
+                      name="PhoneType" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      dataType="dbTimeStamp"
+                      name="ModifiedDate" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\load stage\OLE DB Destination 4.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Destination 4.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\load stage\OLE DB Destination 4.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Destination 4.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\load stage\OLE DB Destination 4.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\load stage\OLE DB Destination 5"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="OLE DB Destination 5"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[stage].[DimCustomer]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">true</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">1899</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\load stage\OLE DB Destination 5.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[AdventureWorksDWExtended]"
+                  connectionManagerRefId="Package.ConnectionManagers[AdventureWorksDWExtended]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[BusinessEntityID_nk]"
+                      cachedDataType="i4"
+                      cachedName="BusinessEntityID_nk"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[Title]"
+                      cachedDataType="wstr"
+                      cachedLength="8"
+                      cachedName="Title"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[FirstName]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="FirstName"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[MiddleName]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="MiddleName"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[LastName]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="LastName"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[PhoneNumber]"
+                      cachedDataType="wstr"
+                      cachedLength="25"
+                      cachedName="PhoneNumber"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[PhoneType]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="PhoneType"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]" />
+                    <inputColumn
+                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[ModifiedDate]"
+                      cachedDataType="wstr"
+                      cachedLength="10"
+                      cachedName="ModifiedDate"
+                      externalMetadataColumnId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      dataType="i4"
+                      name="BusinessEntityID_nk" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      dataType="wstr"
+                      length="50"
+                      name="Title" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      dataType="wstr"
+                      length="50"
+                      name="FirstName" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      dataType="wstr"
+                      length="50"
+                      name="MiddleName" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      dataType="wstr"
+                      length="50"
+                      name="LastName" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      dataType="wstr"
+                      length="25"
+                      name="PhoneNumber" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      dataType="wstr"
+                      length="50"
+                      name="PhoneType" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      dataType="dbTimeStamp"
+                      name="ModifiedDate" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\load stage\OLE DB Destination 5.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Destination 5.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\load stage\OLE DB Destination 5.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Destination 5.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\load stage\OLE DB Destination 5.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\load stage\OLE DB Source"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="OLE DB Source"
+              name="OLE DB Source"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset"></property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">/**************************************************************************************************
+Purpose:	Source to insert rows in stage table from source, normally new or updated records.
+			For demo/template, rows are from AdventureWorks2022 tables.
+			Replace with any source table and ideally a filter to find new records and eliminate reprocessing processed records.
+**************************************************************************************************/
+USE AdventureWorks2022
+
+Select
+	CustomerID as 'BusinessEntityID_nk'
+	,IsNull(pers.Title,'N/A') as 'Title'
+	,FirstName
+	,IsNull(pers.MiddleName,'Unavailable') as 'MiddleName'
+	,LastName
+	,Convert(nvarchar(25),dbo.ufnRemoveAllNonNumericCharacters(PhoneNumber)) as PhoneNumber
+	,pht.Name as 'PhoneType'
+	,GREATEST
+		(	
+			Convert(date,cust.ModifiedDate)
+			,Convert(date,pht.ModifiedDate)
+			,Convert(date,pers.ModifiedDate)
+			,Convert(date,pho.ModifiedDate)
+		)  as ModifiedDate
+From [Person].[Person] as pers
+Inner Join [Sales].[Customer] as cust
+	On pers.BusinessEntityID = cust.PersonID
+Left Join [Person].[PersonPhone] as pho
+	On pers.BusinessEntityID = pho.BusinessEntityID
+Left Join [Person].[PhoneNumberType] as pht
+	On pho.PhoneNumberTypeID = pht.PhoneNumberTypeID
+Where pers.PersonType != 'EM'</property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">2</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\load stage\OLE DB Source.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[AdventureWorks2022]"
+                  connectionManagerRefId="Package.ConnectionManagers[AdventureWorks2022]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[BusinessEntityID_nk]"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]"
+                      name="BusinessEntityID_nk"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Title]"
+                      length="8"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]"
+                      name="Title"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[FirstName]"
+                      length="50"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]"
+                      name="FirstName"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[MiddleName]"
+                      length="50"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]"
+                      name="MiddleName"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[LastName]"
+                      length="50"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]"
+                      name="LastName"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[PhoneNumber]"
+                      length="25"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]"
+                      name="PhoneNumber"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[PhoneType]"
+                      length="50"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]"
+                      name="PhoneType"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ModifiedDate]"
+                      length="10"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]"
+                      name="ModifiedDate"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[BusinessEntityID_nk]"
+                      dataType="i4"
+                      name="BusinessEntityID_nk" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Title]"
+                      dataType="wstr"
+                      length="8"
+                      name="Title" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[FirstName]"
+                      dataType="wstr"
+                      length="50"
+                      name="FirstName" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[MiddleName]"
+                      dataType="wstr"
+                      length="50"
+                      name="MiddleName" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[LastName]"
+                      dataType="wstr"
+                      length="50"
+                      name="LastName" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[PhoneNumber]"
+                      dataType="wstr"
+                      length="25"
+                      name="PhoneNumber" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[PhoneType]"
+                      dataType="wstr"
+                      length="50"
+                      name="PhoneType" />
+                    <externalMetadataColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ModifiedDate]"
+                      dataType="wstr"
+                      length="10"
+                      name="ModifiedDate" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[BusinessEntityID_nk]"
+                      dataType="i4"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[BusinessEntityID_nk]"
+                      name="BusinessEntityID_nk" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Title]"
+                      dataType="wstr"
+                      length="8"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Title]"
+                      name="Title" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[FirstName]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[FirstName]"
+                      name="FirstName" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[MiddleName]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[MiddleName]"
+                      name="MiddleName" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[LastName]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[LastName]"
+                      name="LastName" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[PhoneNumber]"
+                      dataType="wstr"
+                      length="25"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[PhoneNumber]"
+                      name="PhoneNumber" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[PhoneType]"
+                      dataType="wstr"
+                      length="50"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[PhoneType]"
+                      name="PhoneType" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ModifiedDate]"
+                      dataType="wstr"
+                      length="10"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ModifiedDate]"
+                      name="ModifiedDate" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\load stage\Row Count"
+              componentClassID="Microsoft.RowCount"
+              contactInfo="Row Count;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Counts rows as they pass through a data flow. For example, use the number of rows processed to determine whether or not to perform cleanup operations, or update text in an e-mail message to communicate processing status."
+              name="Row Count">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable to hold the row count."
+                  name="VariableName">User::RowCount</property>
+              </properties>
+              <inputs>
+                <input
+                  refId="Package\load stage\Row Count.Inputs[Row Count Input 1]"
+                  hasSideEffects="true"
+                  name="Row Count Input 1">
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\load stage\Row Count.Outputs[Row Count Output 1]"
+                  name="Row Count Output 1"
+                  synchronousInputId="Package\load stage\Row Count.Inputs[Row Count Input 1]">
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\load stage.Paths[Balanced Data Distributor Output 1]"
+              endId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input]"
+              name="Balanced Data Distributor Output 1"
+              startId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 1]" />
+            <path
+              refId="Package\load stage.Paths[Balanced Data Distributor Output 2]"
+              endId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input]"
+              name="Balanced Data Distributor Output 2"
+              startId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 2]" />
+            <path
+              refId="Package\load stage.Paths[Balanced Data Distributor Output 3]"
+              endId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input]"
+              name="Balanced Data Distributor Output 3"
+              startId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 3]" />
+            <path
+              refId="Package\load stage.Paths[Balanced Data Distributor Output 4]"
+              endId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input]"
+              name="Balanced Data Distributor Output 4"
+              startId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 4]" />
+            <path
+              refId="Package\load stage.Paths[Balanced Data Distributor Output 5]"
+              endId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input]"
+              name="Balanced Data Distributor Output 5"
+              startId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 5]" />
+            <path
+              refId="Package\load stage.Paths[OLE DB Source Output]"
+              endId="Package\load stage\Row Count.Inputs[Row Count Input 1]"
+              name="OLE DB Source Output"
+              startId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output]" />
+            <path
+              refId="Package\load stage.Paths[Row Count Output 1]"
+              endId="Package\load stage\bdd.Inputs[Balanced Data Distributor Input]"
+              name="Row Count Output 1"
+              startId="Package\load stage\Row Count.Outputs[Row Count Output 1]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Recreate stage table"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{3B10C343-BE87-416E-B6A4-DD27FC744079}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Recreate stage table"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:LoggingOptions
+        DTS:FilterKind="0" />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{491675FB-4A47-43C8-88D3-C6890C9E484C}"
+          SQLTask:SqlStatementSource="/***********************************************************************************************&#xA;Purpose:&#x9;Recreates staging table for dimension load&#xA;***********************************************************************************************/&#xA;IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[stage].[DimCustomer]') AND type in (N'U'))&#xA;&#x9;DROP TABLE [stage].[DimCustomer]&#xA;GO&#xA;&#xA;/****** Object:  Table [stage].[DimCustomer]    Script Date: 6/6/2024 11:57:15 PM ******/&#xA;SET ANSI_NULLS ON&#xA;GO&#xA;&#xA;SET QUOTED_IDENTIFIER ON&#xA;GO&#xA;&#xA;CREATE TABLE [stage].[DimCustomer]&#xA;(&#xA;&#x9;[BusinessEntityID_nk] [int] NOT NULL,&#xA;&#x9;[Title] [nvarchar](50) NULL,&#xA;&#x9;[FirstName] [nvarchar](50) NULL,&#xA;&#x9;[MiddleName] [nvarchar](50) NULL,&#xA;&#x9;[LastName] [nvarchar](50) NULL,&#xA;&#x9;[PhoneNumber] [nvarchar](25) NULL,&#xA;&#x9;[PhoneType] [nvarchar](50) NULL,&#xA;    [ModifiedDate] [datetime] NULL&#xA;) ON [PRIMARY]&#xA;GO" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Type1_and_3_SCD_changes"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{75D8D96C-97FE-49FE-9BF5-22C0062B0021}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Type1_and_3_SCD_changes"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{491675FB-4A47-43C8-88D3-C6890C9E484C}"
+          SQLTask:SqlStatementSource="/*********insert and update rows in SCD dimension for type 1 and 3 changes************************************/&#xA;USE AdventureWorksDWExtended&#xA;--sql to load DimCustomer where:&#xA;&#x9;/*&#xA;&#x9;[Title]&#x9;&#x9;&#x9;= Type 1&#xA;&#x9;[FirstName]&#x9;&#x9;= Type 2&#xA;&#x9;[MiddleName]&#x9;= Type 2&#xA;&#x9;[LastName]&#x9;&#x9;= Type 2&#xA;&#x9;[PhoneNumber]&#x9;= Type 3&#xA;&#x9;[PhoneType]&#x9;&#x9;= Type 1&#xA;&#x9;*/&#xA;/***********************************************************************/&#xA;--run in ssis:&#xA;&#x9;Declare @PackageStartDate as datetime = ?&#xA;/***********************************************************************/&#xA;/**********************************************************************&#xA;--run in ssms:  &#xA;&#x9;Declare @PackageStartDate as datetime = getdate()&#xA;**********************************************************************/&#xA;&#x9;Declare @CurrentExpirationDate as datetime =&#x9;getdate()&#x9;&#x9;--Convert(date,'12/31/9999') --use convert to date for daily load of records and getdate for anytime load&#xA;&#xA;&#x9;--Type 1 and 3 updates and inserts&#xA;&#x9;MERGE INTO AdventureWorksDWExtended.dbo.DimCustomer as tgt&#xA;&#x9;USING AdventureWorksDWExtended.stage.DimCustomer src &#xA;&#x9;&#x9;ON tgt.[BusinessEntityID_nk] = src.[BusinessEntityID_nk]&#xA;&#x9;WHEN MATCHED AND EXISTS&#x9; --business key exists and type1 or type3 column changes:&#xA;&#x9;(&#xA;&#x9;&#x9;&#x9;SELECT&#xA;&#x9;&#x9;&#x9;&#x9;src.PhoneNumber&#x9;&#x9;&#x9;--type3&#xA;&#x9;&#x9;&#x9;&#x9;,src.Title&#x9;&#x9;&#x9;&#x9;--type1&#xA;&#x9;&#x9;&#x9;&#x9;,src.PhoneType&#x9;&#x9;&#x9;--type1&#xA;&#x9;&#x9;&#x9;EXCEPT&#xA;&#x9;&#x9;&#x9;SELECT&#xA;&#x9;&#x9;&#x9;&#x9;tgt.PhoneNumber_curr&#xA;&#x9;&#x9;&#x9;&#x9;,tgt.Title&#xA;&#x9;&#x9;&#x9;&#x9;,tgt.PhoneType&#xA;&#x9;)&#xA;&#x9;THEN UPDATE&#x9;&#x9;&#xA;&#x9;SET &#xA;&#x9;&#x9;tgt.Title = src.Title&#xA;&#x9;&#x9;,tgt.PhoneNumber_curr = src.PhoneNumber&#xA;&#x9;&#x9;,tgt.PhoneNumber_prev = &#xA;&#x9;&#x9;&#x9;CASE &#xA;&#x9;&#x9;&#x9;WHEN &#xA;&#x9;&#x9;&#x9;&#x9;(src.PhoneNumber &lt;&gt; tgt.PhoneNumber_curr)&#x9;&#x9;&#x9;--type 3&#xA;&#x9;&#x9;&#x9;&#x9;and&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--type 6, for type 3 only remove this&#xA;&#x9;&#x9;&#x9;&#x9;(tgt.IsCurrentRow = 1)&#xA;&#x9;&#x9;&#x9;THEN tgt.PhoneNumber_curr&#xA;&#x9;&#x9;&#x9;WHEN &#xA;&#x9;&#x9;&#x9;&#x9;(tgt.PhoneNumber_curr &lt;&gt; tgt.PhoneNumber_prev)&#x9;&#x9;&#x9;--type 3&#xA;&#x9;&#x9;&#x9;&#x9;and&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--type 6, for type 3 only remove this&#xA;&#x9;&#x9;&#x9;&#x9;(tgt.IsCurrentRow = 0)&#xA;&#x9;&#x9;&#x9;THEN tgt.PhoneNumber_curr&#xA;&#x9;&#x9;&#x9;ELSE tgt.PhoneNumber_prev&#xA;&#x9;&#x9;&#x9;END&#xA;&#x9;&#x9;,tgt.PhoneType = src.PhoneType&#xA;&#x9;&#x9;,tgt.DateUpdated = @PackageStartDate&#xA;&#x9;WHEN NOT MATCHED BY TARGET THEN INSERT&#xA;&#x9;(&#xA;&#x9;&#x9;[BusinessEntityID_nk],&#xA;&#x9;&#x9;[Title],&#xA;&#x9;&#x9;[FirstName],&#xA;&#x9;&#x9;[MiddleName],&#xA;&#x9;&#x9;[LastName],&#xA;&#x9;&#x9;[PhoneNumber_curr],&#xA;&#x9;&#x9;[PhoneNumber_prev],&#xA;&#x9;&#x9;[PhoneType],&#xA;&#x9;&#x9;[EffectiveDate],&#xA;&#x9;&#x9;[ExpirationDate],&#xA;&#x9;&#x9;[DateInserted],&#xA;&#x9;&#x9;[DateUpdated],&#xA;&#x9;&#x9;[IsCurrentRow]&#xA;&#x9;)&#xA;&#x9;VALUES&#xA;&#x9;(&#xA;&#x9;&#x9;src.[BusinessEntityID_nk]&#xA;&#x9;&#x9;,src.Title&#xA;&#x9;&#x9;,src.FirstName&#xA;&#x9;&#x9;,src.MiddleName&#xA;&#x9;&#x9;,src.LastName&#xA;&#x9;&#x9;,src.PhoneNumber&#xA;&#x9;&#x9;,'000000000'&#xA;&#x9;&#x9;,src.PhoneType&#xA;&#x9;&#x9;,src.[ModifiedDate]&#xA;&#x9;&#x9;,@CurrentExpirationDate&#xA;&#x9;&#x9;,@PackageStartDate&#xA;&#x9;&#x9;,@PackageStartDate&#xA;&#x9;&#x9;,Cast(1 as bit)&#xA;&#x9;);&#xA;&#xA;&#x9;SELECT [RowCount] = COUNT(*)&#xA;&#x9;FROM dbo.DimCustomer&#xA;&#x9;WHERE &#xA;&#x9;&#x9;DateInserted = @PackageStartDate &#xA;&#x9;&#x9;OR &#xA;&#x9;&#x9;DateUpdated = @PackageStartDate;"
+          SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ResultBinding
+            SQLTask:ResultName="RowCount"
+            SQLTask:DtsVariableName="User::RowCount" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="System::StartTime"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="7"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Type2 SCD changes"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{DC95F53B-F60C-4382-BB85-5F187F4633C2}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Type2 SCD changes"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{491675FB-4A47-43C8-88D3-C6890C9E484C}"
+          SQLTask:SqlStatementSource="/****************************&#xA;Purpose:&#x9;&#x9;inserts and updates for SCD dimension type 2 changes&#xA;&#xA;&#x9;[Title]&#x9;&#x9;&#x9;= Type 1&#xA;&#x9;[FirstName]&#x9;&#x9;= Type 2&#xA;&#x9;[MiddleName]&#x9;= Type 2&#xA;&#x9;[LastName]&#x9;&#x9;= Type 2&#xA;&#x9;[PhoneNumber]&#x9;= Type 3&#xA;&#x9;[PhoneType]&#x9;&#x9;= Type 1&#xA;************************************************************************************************************/&#xA;USE AdventureWorksDWExtended&#xA;&#xA;/***********************************************************************/&#xA;--run in ssis:&#xA;&#x9;Declare @PackageStartDate as datetime = ?&#xA;/***********************************************************************/&#xA;/**********************************************************************&#xA;--run in ssms:  &#xA;&#x9;Declare @PackageStartDate as datetime = getdate()&#xA;**********************************************************************/&#xA;&#x9;Declare @CurrentExpirationDate as datetime = Convert(date,'12/31/9999')&#xA;&#x9;Declare @RowsProcessed as int;&#xA;&#x9;&#xA;&#x9;IF OBJECT_ID('tempdb..#DimCustomertemp') IS NOT NULL&#xA;&#x9;&#x9;DROP TABLE #DimCustomertemp;&#xA;&#xA;&#x9;CREATE TABLE #DimCustomertemp&#xA;&#x9;(&#xA;&#x9;&#x9;[BusinessEntityID_nk] [int] NOT NULL,&#xA;&#x9;&#x9;[Title] [nvarchar](50) NULL,&#xA;&#x9;&#x9;[FirstName] [nvarchar](50) NULL,&#xA;&#x9;&#x9;[MiddleName] [nvarchar](50) NULL,&#xA;&#x9;&#x9;[LastName] [nvarchar](50) NULL,&#xA;&#x9;&#x9;[PhoneNumber_curr] [nvarchar](25) NULL,&#xA;&#x9;&#x9;[PhoneNumber_prev] [nvarchar](25) NULL,&#xA;&#x9;&#x9;[PhoneType] [nvarchar](50) NULL,&#xA;&#x9;&#x9;[EffectiveDate] [datetime] NULL,&#xA;&#x9;&#x9;[ExpirationDate] [datetime] NULL,&#xA;&#x9;&#x9;[DateInserted] [datetime] NULL,&#xA;&#x9;&#x9;[DateUpdated] [datetime] NULL,&#xA;&#x9;&#x9;[IsCurrentRow] [bit] NULL&#xA;&#x9;);&#xA;&#xA;&#x9;--Type 2 inserts and updates&#xA;&#x9;INSERT INTO #DimCustomertemp&#xA;&#x9;(&#xA;&#x9;&#x9;[BusinessEntityID_nk]&#xA;&#x9;&#x9;,[Title]&#xA;&#x9;&#x9;,[FirstName]&#xA;&#x9;&#x9;,[MiddleName]&#xA;&#x9;&#x9;,[LastName] &#xA;&#x9;&#x9;,[PhoneNumber_curr]&#xA;&#x9;&#x9;,[PhoneNumber_prev]&#xA;&#x9;&#x9;,[PhoneType]&#xA;&#x9;&#x9;,[EffectiveDate]&#xA;&#x9;&#x9;,[ExpirationDate]&#xA;&#x9;&#x9;,[DateInserted]&#xA;&#x9;&#x9;,[DateUpdated]&#xA;&#x9;&#x9;,[IsCurrentRow]&#xA;&#x9;)&#xA;&#x9;SELECT &#xA;&#x9;&#x9;[BusinessEntityID_nk]&#xA;&#x9;&#x9;,[Title]&#xA;&#x9;&#x9;,[FirstName]&#xA;&#x9;&#x9;,[MiddleName]&#xA;&#x9;&#x9;,[LastName]&#xA;&#x9;&#x9;,[PhoneNumber_curr]&#xA;&#x9;&#x9;,[PhoneNumber_prev]&#xA;&#x9;&#x9;,[PhoneType]&#xA;&#x9;&#x9;,[EffectiveDate]&#xA;&#x9;&#x9;,[ExpirationDate]&#xA;&#x9;&#x9;,[DateInserted]&#xA;&#x9;&#x9;,[DateUpdated]&#xA;&#x9;&#x9;,[IsCurrentRow]&#xA;    FROM &#xA;&#x9;(&#xA;&#x9;&#x9;MERGE INTO dbo.DimCustomer as tgt&#xA;&#x9;&#x9;USING stage.DimCustomer as src &#xA;&#x9;&#x9;&#x9;ON tgt.BusinessEntityID_nk = src.BusinessEntityID_nk&#xA;&#x9;&#x9;WHEN MATCHED AND tgt.[ExpirationDate] = @CurrentExpirationDate AND EXISTS &#xA;&#x9;&#x9;(&#x9;&#xA;&#x9;&#x9;&#x9;SELECT &#xA;&#x9;&#x9;&#x9;&#x9;src.[FirstName]&#x9;&#x9;-- Type 2&#xA;&#x9;&#x9;&#x9;&#x9;,src.[MiddleName]&#x9;-- Type 2&#xA;&#x9;&#x9;&#x9;&#x9;,src.[LastName]&#x9;&#x9;-- Type 2&#xA;&#x9;&#x9;&#x9;EXCEPT &#xA;&#x9;&#x9;&#x9;SELECT &#xA;&#x9;&#x9;&#x9;&#x9;tgt.[FirstName]&#xA;&#x9;&#x9;&#x9;&#x9;,tgt.[MiddleName]&#xA;&#x9;&#x9;&#x9;&#x9;,tgt.[LastName]&#xA;&#x9;&#x9;)&#xA;&#x9;&#x9;THEN UPDATE&#xA;&#x9;&#x9;SET &#xA;&#x9;&#x9;&#x9;tgt.[ExpirationDate] = DateAdd(minute,-1,src.ModifiedDate),&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--expired date of row is yesterday from modified date from stage.DimCustomer, anytime run&#xA;&#x9;&#x9;&#x9;--tgt.[ExpirationDate] = Convert(date,DateAdd(day,-1,src.ModifiedDate)),&#x9;&#x9;--expired date of row is yesterday from modified date from stage.DimCustomer, daily run only&#xA;&#x9;&#x9;&#x9;tgt.[DateUpdated] = @PackageStartDate,&#xA;&#x9;&#x9;&#x9;tgt.[IsCurrentRow] = Cast(0 as bit)&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--set historical row IsCurrentRow = 0&#xA;&#x9;&#x9;WHEN NOT MATCHED BY TARGET THEN INSERT&#xA;&#x9;&#x9;(&#xA;&#x9;&#x9;&#x9;[BusinessEntityID_nk]&#xA;&#x9;&#x9;&#x9;,[Title]&#xA;&#x9;&#x9;&#x9;,[FirstName]&#xA;&#x9;&#x9;&#x9;,[MiddleName]&#xA;&#x9;&#x9;&#x9;,[LastName]&#xA;&#x9;&#x9;&#x9;,[PhoneNumber_curr]&#xA;&#x9;&#x9;&#x9;,[PhoneNumber_prev]&#xA;&#x9;&#x9;&#x9;,[PhoneType]&#xA;&#x9;&#x9;&#x9;,[EffectiveDate]&#xA;&#x9;&#x9;&#x9;,[ExpirationDate]&#xA;&#x9;&#x9;&#x9;,[DateInserted]&#xA;&#x9;&#x9;&#x9;,[DateUpdated]&#xA;&#x9;&#x9;&#x9;,[IsCurrentRow]&#xA;&#x9;&#x9;)&#xA;&#x9;&#x9;VALUES&#xA;&#x9;&#x9;(&#xA;&#x9;&#x9;&#x9; src.[BusinessEntityID_nk]&#xA;&#x9;&#x9;&#x9;,src.[Title]&#xA;&#x9;&#x9;&#x9;,src.[FirstName]&#xA;&#x9;&#x9;&#x9;,src.[MiddleName]&#xA;&#x9;&#x9;&#x9;,src.[LastName]&#xA;&#x9;&#x9;&#x9;,src.[PhoneNumber]&#xA;&#x9;&#x9;&#x9;,'0000000000'&#xA;&#x9;&#x9;&#x9;,src.[PhoneType]&#xA;&#x9;&#x9;&#x9;,src.ModifiedDate&#xA;&#x9;&#x9;&#x9;,@CurrentExpirationDate&#xA;&#x9;&#x9;&#x9;,@PackageStartDate&#xA;&#x9;&#x9;&#x9;,@PackageStartDate&#xA;&#x9;&#x9;&#x9;,Cast(1 as bit)&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--set current row IsCurrentRow = 1&#xA;&#x9;&#x9;)&#xA;&#x9;&#x9;OUTPUT $ACTION ActionOut, &#xA;&#x9;&#x9;&#x9;src.[BusinessEntityID_nk]&#xA;&#x9;&#x9;&#x9;,src.[Title]&#xA;&#x9;&#x9;&#x9;,src.[FirstName]&#xA;&#x9;&#x9;&#x9;,src.[MiddleName]&#xA;&#x9;&#x9;&#x9;,src.[LastName]&#xA;&#x9;&#x9;&#x9;,src.[PhoneNumber] as 'PhoneNumber_curr'&#xA;&#x9;&#x9;&#x9;,INSERTED.PhoneNumber_prev as 'PhoneNumber_prev'&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--WHEN MATCHED row&#xA;&#x9;&#x9;&#x9;,src.[PhoneType]&#xA;&#x9;&#x9;&#x9;,src.[ModifiedDate] as 'EffectiveDate'&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--anytime process&#xA;&#x9;&#x9;&#x9;--,Convert(date,src.[ModifiedDate]) as 'EffectiveDate'&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--daily process&#xA;&#x9;&#x9;&#x9;,@CurrentExpirationDate as 'ExpirationDate'&#xA;&#x9;&#x9;&#x9;,@PackageStartDate as 'DateInserted'&#xA;&#x9;&#x9;&#x9;,@PackageStartDate as 'DateUpdated'&#xA;&#x9;&#x9;&#x9;,Cast(1 as bit) as 'IsCurrentRow'&#xA;&#x9;) AS MergeOut&#xA;&#x9;WHERE  MergeOut.ActionOut = 'UPDATE';&#xA;&#xA;&#x9;/*&#xA;&#x9;We use a temp table, and then insert into the dimension table, to avoid this error message:&#xA;&#x9;&#x9;&quot;The target table 'TableName' of the INSERT statement cannot be on either side of a (primary key, foreign key) relationship &#xA;&#x9;&#x9;when the FROM clause contains a nested INSERT, UPDATE, DELETE, or MERGE statement. Found reference constraint 'ConstraintName'.&quot;&#xA;&#xA;&#x9;This only applies if the dimension table has foreign key relationships defined&#xA;&#x9;*/&#xA;&#x9;INSERT INTO dbo.DimCustomer&#xA;&#x9;(&#xA;&#x9;&#x9;[BusinessEntityID_nk]&#xA;&#x9;&#x9;,[Title]&#xA;&#x9;&#x9;,[FirstName]&#xA;&#x9;&#x9;,[MiddleName]&#xA;&#x9;&#x9;,[LastName] &#xA;&#x9;&#x9;,[PhoneNumber_curr]&#xA;&#x9;&#x9;,[PhoneNumber_prev] &#xA;&#x9;&#x9;,[PhoneType]&#xA;&#x9;&#x9;,[EffectiveDate]&#xA;&#x9;&#x9;,[ExpirationDate]&#xA;&#x9;&#x9;,[DateInserted]&#xA;&#x9;&#x9;,[DateUpdated]&#xA;&#x9;&#x9;,[IsCurrentRow]&#xA;&#x9;)&#xA;&#x9;SELECT &#xA;&#x9;&#x9;[BusinessEntityID_nk]&#xA;&#x9;&#x9;,[Title]&#xA;&#x9;&#x9;,[FirstName]&#xA;&#x9;&#x9;,[MiddleName]&#xA;&#x9;&#x9;,[LastName]&#xA;&#x9;&#x9;,[PhoneNumber_curr]&#xA;&#x9;&#x9;,[PhoneNumber_prev]&#xA;&#x9;&#x9;,[PhoneType]&#xA;&#x9;&#x9;,[EffectiveDate]&#xA;&#x9;&#x9;,[ExpirationDate]&#xA;&#x9;&#x9;,[DateInserted]&#xA;&#x9;&#x9;,[DateUpdated]&#xA;&#x9;&#x9;,[IsCurrentRow]&#xA;&#x9;FROM #DimCustomertemp;&#xA;&#xA;&#x9;IF OBJECT_ID('tempdb..#DimCustomertemp') IS NOT NULL&#xA;    DROP TABLE #DimCustomertemp;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="System::StartTime"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="7"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{82B89566-CD50-413D-A1BD-0F5A766B317F}"
+      DTS:From="Package\Check existence of stage schema"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\Recreate stage table" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
+      DTS:CreationName=""
+      DTS:DTSID="{3E470AD9-D6AF-418D-9DCE-1F5B78A8D53D}"
+      DTS:From="Package\AuditCreateRow"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 1"
+      DTS:To="Package\Check existence of stage schema" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
+      DTS:CreationName=""
+      DTS:DTSID="{BFC7660D-0584-44F9-9B39-E69A34DADE58}"
+      DTS:From="Package\Recreate stage table"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 2"
+      DTS:To="Package\load stage" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 4]"
+      DTS:CreationName=""
+      DTS:DTSID="{15F7D8C6-F530-4B6F-8BC0-DC26C7D4AF4E}"
+      DTS:From="Package\Drop and recreate SCD table"
+      DTS:ObjectName="Constraint 4"
+      DTS:To="Package\Type2 SCD changes" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 5]"
+      DTS:CreationName=""
+      DTS:DTSID="{F606F7E9-A8C2-498F-AE4D-0DB852C97F83}"
+      DTS:From="Package\Type2 SCD changes"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 5"
+      DTS:To="Package\Type1_and_3_SCD_changes" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 6]"
+      DTS:CreationName=""
+      DTS:DTSID="{FB1EBCB6-F4EC-474E-AA86-BB0C227EBAEB}"
+      DTS:From="Package\Drop stage table"
+      DTS:ObjectName="Constraint 6"
+      DTS:To="Package\AuditUpdateRow Completed" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Incremental SCD load]"
+      DTS:CreationName=""
+      DTS:DTSID="{7DF734FE-D699-415A-ABDE-AF114072E663}"
+      DTS:EvalOp="3"
+      DTS:Expression="!@[$Project::Reload]"
+      DTS:From="Package\load stage"
+      DTS:ObjectName="Incremental SCD load"
+      DTS:To="Package\Type2 SCD changes" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[non prod server]"
+      DTS:CreationName=""
+      DTS:DTSID="{8B2DB4EA-5086-49D0-8424-49E22AF1027B}"
+      DTS:EvalOp="3"
+      DTS:Expression="@[$Project::ServerName]==&quot;nonprodserver&quot;"
+      DTS:From="Package\Type1_and_3_SCD_changes"
+      DTS:ObjectName="non prod server"
+      DTS:To="Package\AuditUpdateRow Completed" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[prod server]"
+      DTS:CreationName=""
+      DTS:DTSID="{665D875A-D987-4DF1-9B92-82EEB9EAA279}"
+      DTS:EvalOp="3"
+      DTS:Expression="@[$Project::ServerName]==&quot;prodserver&quot;"
+      DTS:From="Package\Type1_and_3_SCD_changes"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="prod server"
+      DTS:To="Package\Drop stage table" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Reload SCD]"
+      DTS:CreationName=""
+      DTS:DTSID="{1D221770-87FE-49F7-9524-A0E431BC6C92}"
+      DTS:EvalOp="3"
+      DTS:Expression="@[$Project::Reload]"
+      DTS:From="Package\load stage"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Reload SCD"
+      DTS:To="Package\Drop and recreate SCD table" />
+  </DTS:PrecedenceConstraints>
+  <DTS:EventHandlers>
+    <DTS:EventHandler
+      DTS:refId="Package.EventHandlers[OnError]"
+      DTS:CreationName="OnError"
+      DTS:DTSID="{BFFE7FE7-2AFB-4D0C-AF92-6BA9DE316948}"
+      DTS:EventID="0"
+      DTS:EventName="OnError"
+      DTS:LocaleID="-1">
+      <DTS:Variables>
+        <DTS:Variable
+          DTS:CreationName=""
+          DTS:Description="The propagate property of the event"
+          DTS:DTSID="{FF614365-E399-452F-B951-BF169CE24736}"
+          DTS:IncludeInDebugDump="6789"
+          DTS:Namespace="System"
+          DTS:ObjectName="Propagate">
+          <DTS:VariableValue
+            DTS:DataType="11">-1</DTS:VariableValue>
+        </DTS:Variable>
+      </DTS:Variables>
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package.EventHandlers[OnError]\AuditUpdateRow Error"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{c6a91375-b43d-4836-af9e-63546712e461}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="AuditUpdateRow Error"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{491675FB-4A47-43C8-88D3-C6890C9E484C}"
+              SQLTask:SqlStatementSource="EXEC [AdventureWorksDWExtended].[dbo].[AuditUpdateRow] @AuditId=?,@Status='Error',@RowCount=?;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="0"
+                SQLTask:DtsVariableName="User::AuditId"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="3"
+                SQLTask:ParameterSize="-1" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="1"
+                SQLTask:DtsVariableName="User::RowCount"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="3"
+                SQLTask:ParameterSize="-1" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+    </DTS:EventHandler>
+  </DTS:EventHandlers>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="32" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="241.142857142858,42.2857142857143"
+          Id="Package\AuditCreateRow"
+          TopLeft="203.333329630119,88.0454496553494" />
+        <NodeLayout
+          Size="221.714285714286,42.2857142857143"
+          Id="Package\AuditUpdateRow Completed"
+          TopLeft="181.333329630119,583.67248534474" />
+        <NodeLayout
+          Size="241.142857142858,42.2857142857143"
+          Id="Package\Check existence of stage schema"
+          TopLeft="203.333329630119,130.331163941064" />
+        <NodeLayout
+          Size="218.857142857143,42.2857142857143"
+          Id="Package\Drop and recreate SCD table"
+          TopLeft="443.88888080455,325.999982671305" />
+        <NodeLayout
+          Size="213.142857142858,42.2857142857143"
+          Id="Package\Drop stage table"
+          TopLeft="443.333329630119,506.795862000936" />
+        <NodeLayout
+          Size="241.142857142858,42.2857142857143"
+          Id="Package\load stage"
+          TopLeft="203.333329630119,214.902592512492" />
+        <NodeLayout
+          Size="241.142857142858,42.2857142857143"
+          Id="Package\Recreate stage table"
+          TopLeft="203.333329630119,172.616878226778" />
+        <NodeLayout
+          Size="221.714285714286,42.2857142857143"
+          Id="Package\Type1_and_3_SCD_changes"
+          TopLeft="181.333329630119,431.101056773311" />
+        <NodeLayout
+          Size="221.714285714286,42.2857142857143"
+          Id="Package\Type2 SCD changes"
+          TopLeft="181.333329630119,388.815342487597" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="203.333329630119,157.188306798207">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,30.8571428571425"
+              Start="0,0"
+              End="-7.5,30.8571428571425">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-18.5,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-18.5,0"
+                    Point2="-22.5,0"
+                    Point3="-22.5,4" />
+                  <mssgle:LineSegment
+                    End="-22.5,26.8571428571425" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-22.5,26.8571428571425"
+                    Point2="-22.5,30.8571428571425"
+                    Point3="-18.5,30.8571428571425" />
+                  <mssgle:LineSegment
+                    End="-7.5,30.8571428571425" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="203.333329630119,109.188306798207">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,36.5714285714289"
+              Start="0,0"
+              End="-7.5,36.5714285714289">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-18.5,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-18.5,0"
+                    Point2="-22.5,0"
+                    Point3="-22.5,4" />
+                  <mssgle:LineSegment
+                    End="-22.5,32.5714285714289" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-22.5,32.5714285714289"
+                    Point2="-22.5,36.5714285714289"
+                    Point3="-18.5,36.5714285714289" />
+                  <mssgle:LineSegment
+                    End="-7.5,36.5714285714289" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 2]"
+          TopLeft="203.333329630119,199.474021083921">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="5.6843418860808E-14,36.5714285714283"
+              Start="0,0"
+              End="-7.49999999999994,36.5714285714283">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-18.5,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-18.5,0"
+                    Point2="-22.5,0"
+                    Point3="-22.5,4" />
+                  <mssgle:LineSegment
+                    End="-22.5,32.5714285714283" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-22.5,32.5714285714283"
+                    Point2="-22.5,36.5714285714283"
+                    Point3="-18.5,36.5714285714283" />
+                  <mssgle:LineSegment
+                    End="-7.49999999999994,36.5714285714283" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 4]"
+          TopLeft="443.88888080455,347.142839814162">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-40.8412654601452,62.815359816292"
+              Start="0,0"
+              End="-33.3412654601452,62.815359816292">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-16.4206327300726,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-16.4206327300726,0"
+                    Point2="-20.4206327300726,0"
+                    Point3="-20.4206327300726,4" />
+                  <mssgle:LineSegment
+                    End="-20.4206327300726,58.815359816292" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-20.4206327300726,58.815359816292"
+                    Point2="-20.4206327300726,62.815359816292"
+                    Point3="-24.4206327300726,62.815359816292" />
+                  <mssgle:LineSegment
+                    End="-33.3412654601452,62.815359816292" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 5]"
+          TopLeft="181.333329630119,409.958199630454">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,42.285714285714"
+              Start="0,0"
+              End="-7.5,42.285714285714">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-18.5,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-18.5,0"
+                    Point2="-22.5,0"
+                    Point3="-22.5,4" />
+                  <mssgle:LineSegment
+                    End="-22.5,38.285714285714" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-22.5,38.285714285714"
+                    Point2="-22.5,42.285714285714"
+                    Point3="-18.5,42.285714285714" />
+                  <mssgle:LineSegment
+                    End="-7.5,42.285714285714" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 6]"
+          TopLeft="549.904758201548,549.08157628665">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-222.095238095238,34.5909090580896"
+              Start="0,0"
+              End="-222.095238095238,27.0909090580896">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,16.6058434716562" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,16.6058434716562"
+                    Point2="0,20.6058434716562"
+                    Point3="-4,20.6058434716562" />
+                  <mssgle:LineSegment
+                    End="-218.095238095238,20.6058434716562" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-218.095238095238,20.6058434716562"
+                    Point2="-222.095238095238,20.6058434716562"
+                    Point3="-222.095238095238,24.6058434716562" />
+                  <mssgle:LineSegment
+                    End="-222.095238095238,27.0909090580896" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Incremental SCD load]"
+          TopLeft="288.619043915833,257.188306798206">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,131.627035689391"
+              Start="0,0"
+              End="0,124.127035689391">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,124.127035689391" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-57.176640625,54.0635178446954,114.35328125,16"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[non prod server]"
+          TopLeft="256.571424868214,473.386771059025">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,110.285714285715"
+              Start="0,0"
+              End="0,102.785714285715">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,102.785714285715" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-44.52734375,43.3928571428574,89.0546875,16"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[prod server]"
+          TopLeft="327.809520106309,473.386771059025">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="222.095238095238,33.409090941911"
+              Start="0,0"
+              End="222.095238095238,25.909090941911">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,9.50725785266615" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,9.50725785266615"
+                    Point2="0,13.5072578526662"
+                    Point3="4,13.5072578526662" />
+                  <mssgle:LineSegment
+                    End="218.095238095238,13.5072578526662" />
+                  <mssgle:CubicBezierSegment
+                    Point1="218.095238095238,13.5072578526662"
+                    Point2="222.095238095238,13.5072578526662"
+                    Point3="222.095238095238,17.5072578526662" />
+                  <mssgle:LineSegment
+                    End="222.095238095238,25.909090941911" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="76.380275297619,18.5072578526662,69.3346875,16"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Reload SCD]"
+          TopLeft="362.76190105869,257.188306798206">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="190.555551174431,68.8116758730987"
+              Start="0,0"
+              End="190.555551174431,61.3116758730987">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,23.7968069204891" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,23.7968069204891"
+                    Point2="0,27.7968069204891"
+                    Point3="4,27.7968069204891" />
+                  <mssgle:LineSegment
+                    End="186.555551174431,27.7968069204891" />
+                  <mssgle:CubicBezierSegment
+                    Point1="186.555551174431,27.7968069204891"
+                    Point2="190.555551174431,27.7968069204891"
+                    Point3="190.555551174431,31.7968069204891" />
+                  <mssgle:LineSegment
+                    End="190.555551174431,61.3116758730987" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="60.2029123059655,32.796806920489,70.1497265625,16"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <AnnotationLayout
+          Text="Template for loading SCD 1,2,3,6 using AdventureWorks2022 in SQL Server 2022&#xD;&#xA;Microsoft Visual Studio Community 2022&#xD;&#xA;Version 17.10.2&#xD;&#xA;VisualStudio.17.Release/17.10.2+35004.147&#xD;&#xA;Microsoft .NET Framework&#xD;&#xA;Version 4.8.09032&#xD;&#xA;Installed Version: Community&#xD;&#xA;&#xD;&#xA;SQL Server Data Tools   17.10.172.0&#xD;&#xA;Microsoft SQL Server Data Tools&#xD;&#xA;&#xD;&#xA;SQL Server Integration Services   16.0.5556.0&#xD;&#xA;Microsoft SQL Server Integration Services Designer&#xD;&#xA;Version 16.0.5556.0&#xD;&#xA;&#xD;&#xA;Uses batch processes instead of row by row used in MS SCD wizard"
+          ParentId="Package"
+          FontInfo="{assembly:Null}"
+          Size="453.142857142858,279.428571428572"
+          Id="005d9d47-9b22-4e3f-a48a-65310ea5e6d5"
+          TopLeft="798.333318793664,137.681810534875" />
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <DtsEventHandler
+    design-time-name="Package.EventHandlers[OnError]">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
+        <NodeLayout
+          Size="188,42.2857142857143"
+          Id="Package.EventHandlers[OnError]\AuditUpdateRow Error"
+          TopLeft="182.222218903495,112.272721037023" />
+      </GraphLayout>
+    </LayoutInfo>
+  </DtsEventHandler>
+  <TaskHost
+    design-time-name="Package\load stage">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="176.571428571429,42.2857142857143"
+          Id="Package\load stage\OLE DB Destination 1"
+          TopLeft="51.1111101802484,251.136349688077" />
+        <NodeLayout
+          Size="176.571428571429,42.2857142857143"
+          Id="Package\load stage\OLE DB Destination 2"
+          TopLeft="94.9999982698098,404.240242969496" />
+        <NodeLayout
+          Size="176.571428571429,42.2857142857143"
+          Id="Package\load stage\OLE DB Destination 3"
+          TopLeft="419.999992350738,451.571414852879" />
+        <NodeLayout
+          Size="176.571428571429,42.2857142857143"
+          Id="Package\load stage\OLE DB Destination 4"
+          TopLeft="733.888875522916,401.402592151478" />
+        <NodeLayout
+          Size="176.571428571429,42.2857142857143"
+          Id="Package\load stage\OLE DB Destination 5"
+          TopLeft="792.222207793853,256.097411097652" />
+        <NodeLayout
+          Size="150.285714285715,42.2857142857143"
+          Id="Package\load stage\OLE DB Source"
+          TopLeft="441.111122796565,50.3043491297273" />
+        <NodeLayout
+          Size="133.142857142858,42.2857142857143"
+          Id="Package\load stage\Row Count"
+          TopLeft="448.33332516805,153.045446045205" />
+        <NodeLayout
+          Size="97.7142857142858,42.2857142857143"
+          Id="Package\load stage\bdd"
+          TopLeft="461.666658258549,257.045440268973" />
+        <EdgeLayout
+          Id="Package\load stage.Paths[Balanced Data Distributor Output 3]"
+          TopLeft="509.404753876072,299.331154554687">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,152.240260298191"
+              Start="0,0"
+              End="0,144.740260298191">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,144.740260298191" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-77.82263671875,66.5654426490955,155.6452734375,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\load stage.Paths[Balanced Data Distributor Output 2]"
+          TopLeft="488.095229687121,299.331154554687">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-304.809517131597,104.909088414809"
+              Start="0,0"
+              End="-304.809517131597,97.4090884148085">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,32.827668608614" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,32.827668608614"
+                    Point2="0,36.827668608614"
+                    Point3="-4,36.827668608614" />
+                  <mssgle:LineSegment
+                    End="-300.809517131597,36.827668608614" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-300.809517131597,36.827668608614"
+                    Point2="-304.809517131597,36.827668608614"
+                    Point3="-304.809517131597,40.827668608614" />
+                  <mssgle:LineSegment
+                    End="-304.809517131597,97.4090884148085" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-230.290871847048,41.827668608614,155.7722265625,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\load stage.Paths[Balanced Data Distributor Output 1]"
+          TopLeft="461.666658258549,275.233752121382">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-233.984119506872,0"
+              Start="0,0"
+              End="-226.484119506872,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-226.484119506872,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-190.942626159686,5,155.4011328125,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\load stage.Paths[Row Count Output 1]"
+          TopLeft="512.714277427585,195.331160330919">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,61.7142799380539"
+              Start="0,0"
+              End="0,54.2142799380539">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,54.2142799380539" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\load stage.Paths[OLE DB Source Output]"
+          TopLeft="515.57936683945,92.5900634154416">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60.4553826297634"
+              Start="0,0"
+              End="0,52.9553826297634">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.9553826297634" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\load stage.Paths[Balanced Data Distributor Output 5]"
+          TopLeft="559.380943972835,277.71428282617">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="232.841263821018,0"
+              Start="0,0"
+              End="225.341263821018,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="225.341263821018,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="34.826022535509,5,155.68921875,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\load stage.Paths[Balanced Data Distributor Output 4]"
+          TopLeft="532.952372544264,299.331154554687">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="289.222217264367,102.071437596791"
+              Start="0,0"
+              End="289.222217264367,94.5714375967905">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,31.8315293271466" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,31.8315293271466"
+                    Point2="0,35.8315293271466"
+                    Point3="4,35.8315293271466" />
+                  <mssgle:LineSegment
+                    End="285.222217264367,35.8315293271466" />
+                  <mssgle:CubicBezierSegment
+                    Point1="285.222217264367,35.8315293271466"
+                    Point2="289.222217264367,35.8315293271466"
+                    Point3="289.222217264367,39.8315293271466" />
+                  <mssgle:LineSegment
+                    End="289.222217264367,94.5714375967905" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="66.6297805071835,40.8315293271466,155.96265625,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <AnnotationLayout
+          Text="Writes rows to AdventureWorksDWExtend.dbo.DimCustomer"
+          ParentId="Package\load stage"
+          FontInfo="{assembly:Null}"
+          Size="350.857142857143,60"
+          Id="d7757528-c6e9-4242-b564-ddec71b9d490"
+          TopLeft="859.444428791788,111.681811978933" />
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\load stage\OLE DB Destination 1">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\load stage\OLE DB Destination 2">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\load stage\OLE DB Destination 3">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\load stage\OLE DB Destination 4">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\load stage\OLE DB Destination 5">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\load stage\OLE DB Source">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PrecedenceConstraint
+    design-time-name="Package.PrecedenceConstraints[Incremental SCD load]">
+    <ShowAnnotation>ConstraintName</ShowAnnotation>
+  </PrecedenceConstraint>
+  <PrecedenceConstraint
+    design-time-name="Package.PrecedenceConstraints[non prod server]">
+    <ShowAnnotation>ConstraintName</ShowAnnotation>
+  </PrecedenceConstraint>
+  <PrecedenceConstraint
+    design-time-name="Package.PrecedenceConstraints[prod server]">
+    <ShowAnnotation>ConstraintName</ShowAnnotation>
+  </PrecedenceConstraint>
+  <PrecedenceConstraint
+    design-time-name="Package.PrecedenceConstraints[Reload SCD]">
+    <ShowAnnotation>ConstraintName</ShowAnnotation>
+  </PrecedenceConstraint>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
