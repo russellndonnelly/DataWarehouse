@@ -5,9 +5,11 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{C9674DCB-5085-4A16-B785-4C70DD1589BD}") = "Datawarehouse", "Datawarehouse\Datawarehouse.dtproj", "{168712E3-B093-4A88-BA55-A90F65400A74}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SetupFiles", "SetupFiles", "{333EC46D-3533-43BD-AB40-BEFCB72911CB}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SetupFiles", "SetupFiles", "{6308000D-1CC1-4385-A219-88D64EF7D4BA}"
 	ProjectSection(SolutionItems) = preProject
-		SetupDatabase.sql = SetupDatabase.sql
+		SetupFiles\CreateAdventureWorksDWExtended.sql = SetupFiles\CreateAdventureWorksDWExtended.sql
+		SetupFiles\SetupDatabase.sql = SetupFiles\SetupDatabase.sql
+		SetupFiles\teststeps.sql = SetupFiles\teststeps.sql
 	EndProjectSection
 EndProject
 Global

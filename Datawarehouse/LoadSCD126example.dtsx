@@ -5,14 +5,14 @@
   DTS:CreationName="Microsoft.Package"
   DTS:CreatorComputerName="RUSSELLASUS"
   DTS:CreatorName="RUSSELLASUS\russell.n.donnelly"
-  DTS:DTSID="{5685DC43-F7F1-49D1-B04D-2D157E597CC6}"
+  DTS:DTSID="{CADF1994-60C1-4C9D-8C33-DEB03A413CDF}"
   DTS:ExecutableType="Microsoft.Package"
   DTS:LastModifiedProductVersion="16.0.5556.0"
   DTS:LocaleID="1033"
-  DTS:ObjectName="LoadSCDtemplate"
+  DTS:ObjectName="LoadSCD126example"
   DTS:PackageType="5"
-  DTS:VersionBuild="271"
-  DTS:VersionGUID="{DF3D2484-9671-4783-946A-1BE336145970}">
+  DTS:VersionBuild="360"
+  DTS:VersionGUID="{0263566B-59F0-460A-AFBF-108DD661BE49}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -53,6 +53,17 @@
       </DTS:ObjectData>
     </DTS:LogProvider>
   </DTS:LogProviders>
+  <DTS:PackageParameters>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="11"
+      DTS:DTSID="{46C8D29C-4D32-4ABF-A03B-D977E15A32DE}"
+      DTS:ObjectName="TestSCDProcess">
+      <DTS:Property
+        DTS:DataType="11"
+        DTS:Name="ParameterValue">0</DTS:Property>
+    </DTS:PackageParameter>
+  </DTS:PackageParameters>
   <DTS:Variables>
     <DTS:Variable
       DTS:CreationName=""
@@ -614,14 +625,36 @@
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
-      DTS:refId="Package\load stage"
+      DTS:refId="Package\Load SCD attributes 1,2,6"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{2704C7E9-C457-4901-BB7B-E3E0FB317F13}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Load SCD attributes 1,2,6"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{491675FB-4A47-43C8-88D3-C6890C9E484C}"
+          SQLTask:SqlStatementSource="/*********************************************************************************************&#xA;Purpose:&#x9;&#x9;inserts and updates for SCD attribute types: 1,2 and 6&#xA;Attribute&#x9;&#x9;SCD Type&#xA;[Title]&#x9;&#x9;&#x9;1&#xA;[FirstName]&#x9;&#x9;2&#xA;[MiddleName]&#x9;2&#xA;[LastName]&#x9;&#x9;2&#xA;[PhoneNumber]&#x9;6&#xA;[PhoneType]&#x9;&#x9;1&#xA;*********************************************************************************************/&#xA;USE AdventureWorksDWExtended&#xA;&#xA;/***********************************************************************&#xA;--run in ssis:&#xA;&#x9;Declare @PackageStartDate as datetime = ?&#xA;***********************************************************************/&#xA;/**********************************************************************/&#xA;--run in ssms:  &#xA;&#x9;Declare @PackageStartDate as datetime = getdate()&#xA;/**********************************************************************/&#xA;&#x9;Declare @CurrentExpirationDate as datetime = Convert(date,'12/31/9999')&#xA;&#xA;/*type 1 attribute change*********************************************************************/&#xA;&#x9;MERGE INTO AdventureWorksDWExtended.dbo.DimCustomer as tgt&#xA;&#x9;USING AdventureWorksDWExtended.stage.DimCustomer src &#xA;&#x9;&#x9;ON tgt.[BusinessEntityID_nk] = src.[BusinessEntityID_nk]&#xA;&#x9;WHEN MATCHED AND EXISTS&#x9; --business key exists and type1 or type3 attribute changes:&#xA;&#x9;(&#xA;&#x9;&#x9;&#x9;SELECT&#xA;&#x9;&#x9;&#x9;&#x9;src.Title&#x9;&#x9;&#x9;&#x9;--type1&#xA;&#x9;&#x9;&#x9;&#x9;,src.PhoneType&#x9;&#x9;&#x9;--type1&#xA;&#x9;&#x9;&#x9;EXCEPT&#xA;&#x9;&#x9;&#x9;SELECT&#xA;&#x9;&#x9;&#x9;&#x9;tgt.Title&#xA;&#x9;&#x9;&#x9;&#x9;,tgt.PhoneType&#xA;&#x9;)&#xA;&#x9;THEN UPDATE&#x9;SET &#xA;&#x9;&#x9;tgt.Title = src.Title&#xA;&#x9;&#x9;,tgt.PhoneType = src.PhoneType&#xA;&#x9;&#x9;,tgt.DateUpdated = @PackageStartDate;&#xA;&#xA;&#xA;/*attribute type 2 or type 6 changes need to be processed together since both could potentially occur on the same time adding new row**/&#xA;&#x9;Update tgt&#xA;&#x9;Set&#xA;&#x9;&#x9;tgt.IsCurrentRow = 0&#xA;&#x9;&#x9;,tgt.ExpirationDate = DateAdd(minute,-1,src.ModifiedDate)&#xA;&#x9;From dbo.DimCustomer as tgt&#xA;&#x9;Inner Join stage.DimCustomer as src&#xA;&#x9;&#x9;On tgt.BusinessEntityID_nk = src.BusinessEntityID_nk&#xA;&#x9;Where &#xA;&#x9;&#x9;tgt.ExpirationDate = @CurrentExpirationDate&#xA;&#x9;&#x9;And &#xA;&#x9;&#x9;(&#xA;&#x9;&#x9;&#x9;src.[PhoneNumber] != tgt.[PhoneNumber_curr]&#xA;&#x9;&#x9;&#x9;or&#xA;&#x9;&#x9;&#x9;src.[MiddleName] != tgt.[MiddleName]&#xA;&#x9;&#x9;)&#xA;&#x9;&#x9;And tgt.IsCurrentRow = 1;&#xA;&#xA;&#x9;Insert dbo.DimCustomer&#xA;&#x9;(&#xA;&#x9;&#x9;BusinessEntityID_nk&#xA;&#x9;&#x9;,Title&#xA;&#x9;&#x9;,FirstName&#xA;&#x9;&#x9;,MiddleName&#xA;&#x9;&#x9;,LastName&#xA;&#x9;&#x9;,PhoneNumber_curr&#xA;&#x9;&#x9;,PhoneNumber_prev&#xA;&#x9;&#x9;,PhoneType&#xA;&#x9;&#x9;,EffectiveDate&#xA;&#x9;&#x9;,ExpirationDate&#xA;&#x9;&#x9;,DateInserted&#xA;&#x9;&#x9;,DateUpdated&#xA;&#x9;&#x9;,IsCurrentRow&#xA;&#x9;)&#xA;&#x9;Select &#xA;&#x9;&#x9;tgt.BusinessEntityID_nk&#xA;&#x9;&#x9;,src.Title&#xA;&#x9;&#x9;,src.FirstName&#xA;&#x9;&#x9;,src.MiddleName&#xA;&#x9;&#x9;,src.LastName&#xA;&#x9;&#x9;,src.PhoneNumber as PhoneNumber_curr&#xA;&#x9;&#x9;,tgt.[PhoneNumber_curr] as 'PhoneNumber_prev'&#x9;&#xA;&#x9;&#x9;,src.PhoneType&#xA;&#x9;&#x9;,src.ModifiedDate as EffectiveDate&#xA;&#x9;&#x9;,@CurrentExpirationDate as 'ExpirationDate'&#xA;&#x9;&#x9;--,Convert(date,@CurrentExpirationDate) as 'ExpirationDate&#xA;&#x9;&#x9;,@PackageStartDate as 'DateInserted'&#xA;&#x9;&#x9;,@PackageStartDate as 'DateUpdated'&#xA;&#x9;&#x9;,Cast(1 as bit)&#x9; as 'IsCurrentRow'&#xA;&#x9;From dbo.DimCustomer as tgt&#xA;&#x9;Inner Join stage.DimCustomer as src&#xA;&#x9;&#x9;On tgt.BusinessEntityID_nk = src.BusinessEntityID_nk&#xA;&#x9;Where &#xA;&#x9;&#x9;(&#xA;&#x9;&#x9;&#x9;src.[PhoneNumber] != tgt.[PhoneNumber_curr]&#xA;&#x9;&#x9;&#x9;or&#xA;&#x9;&#x9;&#x9;src.[MiddleName] != tgt.[MiddleName]&#xA;&#x9;&#x9;)&#xA;&#x9;&#x9;And tgt.ExpirationDate = DateAdd(minute,-1,src.ModifiedDate);&#xA;&#xA;&#xA;&#x9;--Update tgt&#xA;&#x9;--&#x9;Set tgt.ExpirationDate = @CurrentExpirationDate&#xA;&#x9;--From AdventureWorksDWExtended.dbo.DimCustomer as tgt&#xA;&#x9;--Inner Join AdventureWorksDWExtended.stage.DimCustomer src &#xA;&#x9;--&#x9;ON tgt.[BusinessEntityID_nk] = src.[BusinessEntityID_nk]&#xA;&#x9;--Where &#xA;&#x9;--&#x9;tgt.IsCurrentRow = 1&#xA;&#x9;--&#x9;And tgt.DateUpdated = @PackageStartDate&#xA;&#xA;/***********new business/durable key row added in source**************************/&#xA;&#x9;MERGE INTO dbo.DimCustomer as tgt&#xA;&#x9;USING stage.DimCustomer as src &#xA;&#x9;&#x9;ON tgt.BusinessEntityID_nk = src.BusinessEntityID_nk&#xA;&#x9;WHEN NOT MATCHED BY TARGET THEN INSERT&#xA;&#x9;(&#xA;&#x9;&#x9;[BusinessEntityID_nk]&#xA;&#x9;&#x9;,[Title]&#xA;&#x9;&#x9;,[FirstName]&#xA;&#x9;&#x9;,[MiddleName]&#xA;&#x9;&#x9;,[LastName]&#xA;&#x9;&#x9;,[PhoneNumber_curr]&#xA;&#x9;&#x9;,[PhoneNumber_prev]&#xA;&#x9;&#x9;,[PhoneType]&#xA;&#x9;&#x9;,[EffectiveDate]&#xA;&#x9;&#x9;,[ExpirationDate]&#xA;&#x9;&#x9;,[DateInserted]&#xA;&#x9;&#x9;,[DateUpdated]&#xA;&#x9;&#x9;,[IsCurrentRow]&#xA;&#x9;)&#xA;&#x9;VALUES&#xA;&#x9;(&#xA;&#x9;&#x9;&#x9;src.[BusinessEntityID_nk]&#xA;&#x9;&#x9;,src.[Title]&#xA;&#x9;&#x9;,src.[FirstName]&#xA;&#x9;&#x9;,src.[MiddleName]&#xA;&#x9;&#x9;,src.[LastName]&#xA;&#x9;&#x9;,src.[PhoneNumber]&#xA;&#x9;&#x9;,'0000000000'&#x9;&#x9;&#x9;--default phone number&#xA;&#x9;&#x9;,src.[PhoneType]&#xA;&#x9;&#x9;,src.ModifiedDate&#xA;&#x9;&#x9;,@CurrentExpirationDate&#xA;&#x9;&#x9;,@PackageStartDate&#xA;&#x9;&#x9;,@PackageStartDate&#xA;&#x9;&#x9;,Cast(1 as bit)&#xA;&#x9;);&#xA;&#xA;&#xA;&#x9;SELECT [RowCount] = COUNT(*)&#xA;&#x9;FROM dbo.DimCustomer&#xA;&#x9;WHERE &#xA;&#x9;&#x9;DateInserted = @PackageStartDate &#xA;&#x9;&#x9;OR &#xA;&#x9;&#x9;DateUpdated = @PackageStartDate;"
+          SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ResultBinding
+            SQLTask:ResultName="RowCount"
+            SQLTask:DtsVariableName="User::RowCount" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Load Stage"
       DTS:CreationName="Microsoft.Pipeline"
       DTS:DelayValidation="True"
       DTS:Description="Data Flow Task"
       DTS:DTSID="{4E25D09B-83AB-4CB5-B4DF-6D6DEEA2CC33}"
       DTS:ExecutableType="Microsoft.Pipeline"
       DTS:LocaleID="-1"
-      DTS:ObjectName="load stage"
+      DTS:ObjectName="Load Stage"
       DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
       <DTS:Variables />
       <DTS:LoggingOptions
@@ -661,14 +694,14 @@
           version="1">
           <components>
             <component
-              refId="Package\load stage\bdd"
+              refId="Package\Load Stage\bdd"
               componentClassID="Microsoft.BDD"
               contactInfo="Balanced Data Distributor;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
               description="Evaluates and directs rows in a dataset to multiple destinations."
               name="bdd">
               <inputs>
                 <input
-                  refId="Package\load stage\bdd.Inputs[Balanced Data Distributor Input]"
+                  refId="Package\Load Stage\bdd.Inputs[Balanced Data Distributor Input]"
                   description="Input to the Balanced Data      Distributor Transformation"
                   name="Balanced Data Distributor Input">
                   <externalMetadataColumns />
@@ -676,58 +709,58 @@
               </inputs>
               <outputs>
                 <output
-                  refId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 1]"
+                  refId="Package\Load Stage\bdd.Outputs[Balanced Data Distributor Output 1]"
                   deleteOutputOnPathDetached="true"
                   exclusionGroup="1"
                   name="Balanced Data Distributor Output 1"
-                  synchronousInputId="Package\load stage\bdd.Inputs[Balanced Data Distributor Input]">
+                  synchronousInputId="Package\Load Stage\bdd.Inputs[Balanced Data Distributor Input]">
                   <externalMetadataColumns />
                 </output>
                 <output
-                  refId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 2]"
+                  refId="Package\Load Stage\bdd.Outputs[Balanced Data Distributor Output 2]"
                   deleteOutputOnPathDetached="true"
                   exclusionGroup="1"
                   name="Balanced Data Distributor Output 2"
-                  synchronousInputId="Package\load stage\bdd.Inputs[Balanced Data Distributor Input]">
+                  synchronousInputId="Package\Load Stage\bdd.Inputs[Balanced Data Distributor Input]">
                   <externalMetadataColumns />
                 </output>
                 <output
-                  refId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 3]"
+                  refId="Package\Load Stage\bdd.Outputs[Balanced Data Distributor Output 3]"
                   deleteOutputOnPathDetached="true"
                   exclusionGroup="1"
                   name="Balanced Data Distributor Output 3"
-                  synchronousInputId="Package\load stage\bdd.Inputs[Balanced Data Distributor Input]">
+                  synchronousInputId="Package\Load Stage\bdd.Inputs[Balanced Data Distributor Input]">
                   <externalMetadataColumns />
                 </output>
                 <output
-                  refId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 4]"
+                  refId="Package\Load Stage\bdd.Outputs[Balanced Data Distributor Output 4]"
                   deleteOutputOnPathDetached="true"
                   exclusionGroup="1"
                   name="Balanced Data Distributor Output 4"
-                  synchronousInputId="Package\load stage\bdd.Inputs[Balanced Data Distributor Input]">
+                  synchronousInputId="Package\Load Stage\bdd.Inputs[Balanced Data Distributor Input]">
                   <externalMetadataColumns />
                 </output>
                 <output
-                  refId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 5]"
+                  refId="Package\Load Stage\bdd.Outputs[Balanced Data Distributor Output 5]"
                   deleteOutputOnPathDetached="true"
                   exclusionGroup="1"
                   name="Balanced Data Distributor Output 5"
-                  synchronousInputId="Package\load stage\bdd.Inputs[Balanced Data Distributor Input]">
+                  synchronousInputId="Package\Load Stage\bdd.Inputs[Balanced Data Distributor Input]">
                   <externalMetadataColumns />
                 </output>
                 <output
-                  refId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 6]"
+                  refId="Package\Load Stage\bdd.Outputs[Balanced Data Distributor Output 6]"
                   dangling="true"
                   deleteOutputOnPathDetached="true"
                   exclusionGroup="1"
                   name="Balanced Data Distributor Output 6"
-                  synchronousInputId="Package\load stage\bdd.Inputs[Balanced Data Distributor Input]">
+                  synchronousInputId="Package\Load Stage\bdd.Inputs[Balanced Data Distributor Input]">
                   <externalMetadataColumns />
                 </output>
               </outputs>
             </component>
             <component
-              refId="Package\load stage\OLE DB Destination 1"
+              refId="Package\Load Stage\OLE DB Destination 1"
               componentClassID="Microsoft.OLEDBDestination"
               contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
               description="OLE DB Destination"
@@ -784,7 +817,7 @@
               </properties>
               <connections>
                 <connection
-                  refId="Package\load stage\OLE DB Destination 1.Connections[OleDbConnection]"
+                  refId="Package\Load Stage\OLE DB Destination 1.Connections[OleDbConnection]"
                   connectionManagerID="Package.ConnectionManagers[AdventureWorksDWExtended]"
                   connectionManagerRefId="Package.ConnectionManagers[AdventureWorksDWExtended]"
                   description="The OLE DB runtime connection used to access the database."
@@ -792,106 +825,106 @@
               </connections>
               <inputs>
                 <input
-                  refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input]"
+                  refId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input]"
                   errorOrTruncationOperation="Insert"
                   errorRowDisposition="FailComponent"
                   hasSideEffects="true"
                   name="OLE DB Destination Input">
                   <inputColumns>
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[BusinessEntityID_nk]"
+                      refId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[BusinessEntityID_nk]"
                       cachedDataType="i4"
                       cachedName="BusinessEntityID_nk"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[Title]"
+                      refId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[Title]"
                       cachedDataType="wstr"
                       cachedLength="8"
                       cachedName="Title"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[FirstName]"
+                      refId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[FirstName]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="FirstName"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[MiddleName]"
+                      refId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[MiddleName]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="MiddleName"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[LastName]"
+                      refId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[LastName]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="LastName"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[PhoneNumber]"
+                      refId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[PhoneNumber]"
                       cachedDataType="wstr"
                       cachedLength="25"
                       cachedName="PhoneNumber"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[PhoneType]"
+                      refId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[PhoneType]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="PhoneType"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[ModifiedDate]"
+                      refId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[ModifiedDate]"
                       cachedDataType="wstr"
                       cachedLength="10"
                       cachedName="ModifiedDate"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]" />
                   </inputColumns>
                   <externalMetadataColumns
                     isUsed="True">
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      refId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
                       dataType="i4"
                       name="BusinessEntityID_nk" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      refId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
                       dataType="wstr"
                       length="50"
                       name="Title" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      refId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
                       dataType="wstr"
                       length="50"
                       name="FirstName" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      refId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
                       dataType="wstr"
                       length="50"
                       name="MiddleName" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      refId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
                       dataType="wstr"
                       length="50"
                       name="LastName" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      refId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
                       dataType="wstr"
                       length="25"
                       name="PhoneNumber" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      refId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
                       dataType="wstr"
                       length="50"
                       name="PhoneType" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      refId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
                       dataType="dbTimeStamp"
                       name="ModifiedDate" />
                   </externalMetadataColumns>
@@ -899,22 +932,22 @@
               </inputs>
               <outputs>
                 <output
-                  refId="Package\load stage\OLE DB Destination 1.Outputs[OLE DB Destination Error Output]"
+                  refId="Package\Load Stage\OLE DB Destination 1.Outputs[OLE DB Destination Error Output]"
                   exclusionGroup="1"
                   isErrorOut="true"
                   name="OLE DB Destination Error Output"
-                  synchronousInputId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input]">
+                  synchronousInputId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input]">
                   <outputColumns>
                     <outputColumn
-                      refId="Package\load stage\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      refId="Package\Load Stage\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
                       dataType="i4"
-                      lineageId="Package\load stage\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      lineageId="Package\Load Stage\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
                       name="ErrorCode"
                       specialFlags="1" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      refId="Package\Load Stage\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
                       dataType="i4"
-                      lineageId="Package\load stage\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      lineageId="Package\Load Stage\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
                       name="ErrorColumn"
                       specialFlags="2" />
                   </outputColumns>
@@ -923,7 +956,7 @@
               </outputs>
             </component>
             <component
-              refId="Package\load stage\OLE DB Destination 2"
+              refId="Package\Load Stage\OLE DB Destination 2"
               componentClassID="Microsoft.OLEDBDestination"
               contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
               description="OLE DB Destination"
@@ -980,7 +1013,7 @@
               </properties>
               <connections>
                 <connection
-                  refId="Package\load stage\OLE DB Destination 2.Connections[OleDbConnection]"
+                  refId="Package\Load Stage\OLE DB Destination 2.Connections[OleDbConnection]"
                   connectionManagerID="Package.ConnectionManagers[AdventureWorksDWExtended]"
                   connectionManagerRefId="Package.ConnectionManagers[AdventureWorksDWExtended]"
                   description="The OLE DB runtime connection used to access the database."
@@ -988,106 +1021,106 @@
               </connections>
               <inputs>
                 <input
-                  refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input]"
+                  refId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input]"
                   errorOrTruncationOperation="Insert"
                   errorRowDisposition="FailComponent"
                   hasSideEffects="true"
                   name="OLE DB Destination Input">
                   <inputColumns>
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[BusinessEntityID_nk]"
+                      refId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[BusinessEntityID_nk]"
                       cachedDataType="i4"
                       cachedName="BusinessEntityID_nk"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[Title]"
+                      refId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[Title]"
                       cachedDataType="wstr"
                       cachedLength="8"
                       cachedName="Title"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[FirstName]"
+                      refId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[FirstName]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="FirstName"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[MiddleName]"
+                      refId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[MiddleName]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="MiddleName"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[LastName]"
+                      refId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[LastName]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="LastName"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[PhoneNumber]"
+                      refId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[PhoneNumber]"
                       cachedDataType="wstr"
                       cachedLength="25"
                       cachedName="PhoneNumber"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[PhoneType]"
+                      refId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[PhoneType]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="PhoneType"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[ModifiedDate]"
+                      refId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].Columns[ModifiedDate]"
                       cachedDataType="wstr"
                       cachedLength="10"
                       cachedName="ModifiedDate"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]" />
                   </inputColumns>
                   <externalMetadataColumns
                     isUsed="True">
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      refId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
                       dataType="i4"
                       name="BusinessEntityID_nk" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      refId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
                       dataType="wstr"
                       length="50"
                       name="Title" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      refId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
                       dataType="wstr"
                       length="50"
                       name="FirstName" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      refId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
                       dataType="wstr"
                       length="50"
                       name="MiddleName" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      refId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
                       dataType="wstr"
                       length="50"
                       name="LastName" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      refId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
                       dataType="wstr"
                       length="25"
                       name="PhoneNumber" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      refId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
                       dataType="wstr"
                       length="50"
                       name="PhoneType" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      refId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
                       dataType="dbTimeStamp"
                       name="ModifiedDate" />
                   </externalMetadataColumns>
@@ -1095,22 +1128,22 @@
               </inputs>
               <outputs>
                 <output
-                  refId="Package\load stage\OLE DB Destination 2.Outputs[OLE DB Destination Error Output]"
+                  refId="Package\Load Stage\OLE DB Destination 2.Outputs[OLE DB Destination Error Output]"
                   exclusionGroup="1"
                   isErrorOut="true"
                   name="OLE DB Destination Error Output"
-                  synchronousInputId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input]">
+                  synchronousInputId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input]">
                   <outputColumns>
                     <outputColumn
-                      refId="Package\load stage\OLE DB Destination 2.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      refId="Package\Load Stage\OLE DB Destination 2.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
                       dataType="i4"
-                      lineageId="Package\load stage\OLE DB Destination 2.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      lineageId="Package\Load Stage\OLE DB Destination 2.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
                       name="ErrorCode"
                       specialFlags="1" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Destination 2.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      refId="Package\Load Stage\OLE DB Destination 2.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
                       dataType="i4"
-                      lineageId="Package\load stage\OLE DB Destination 2.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      lineageId="Package\Load Stage\OLE DB Destination 2.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
                       name="ErrorColumn"
                       specialFlags="2" />
                   </outputColumns>
@@ -1119,7 +1152,7 @@
               </outputs>
             </component>
             <component
-              refId="Package\load stage\OLE DB Destination 3"
+              refId="Package\Load Stage\OLE DB Destination 3"
               componentClassID="Microsoft.OLEDBDestination"
               contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
               description="OLE DB Destination"
@@ -1176,7 +1209,7 @@
               </properties>
               <connections>
                 <connection
-                  refId="Package\load stage\OLE DB Destination 3.Connections[OleDbConnection]"
+                  refId="Package\Load Stage\OLE DB Destination 3.Connections[OleDbConnection]"
                   connectionManagerID="Package.ConnectionManagers[AdventureWorksDWExtended]"
                   connectionManagerRefId="Package.ConnectionManagers[AdventureWorksDWExtended]"
                   description="The OLE DB runtime connection used to access the database."
@@ -1184,106 +1217,106 @@
               </connections>
               <inputs>
                 <input
-                  refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input]"
+                  refId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input]"
                   errorOrTruncationOperation="Insert"
                   errorRowDisposition="FailComponent"
                   hasSideEffects="true"
                   name="OLE DB Destination Input">
                   <inputColumns>
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[BusinessEntityID_nk]"
+                      refId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[BusinessEntityID_nk]"
                       cachedDataType="i4"
                       cachedName="BusinessEntityID_nk"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[Title]"
+                      refId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[Title]"
                       cachedDataType="wstr"
                       cachedLength="8"
                       cachedName="Title"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[FirstName]"
+                      refId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[FirstName]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="FirstName"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[MiddleName]"
+                      refId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[MiddleName]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="MiddleName"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[LastName]"
+                      refId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[LastName]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="LastName"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[PhoneNumber]"
+                      refId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[PhoneNumber]"
                       cachedDataType="wstr"
                       cachedLength="25"
                       cachedName="PhoneNumber"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[PhoneType]"
+                      refId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[PhoneType]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="PhoneType"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[ModifiedDate]"
+                      refId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].Columns[ModifiedDate]"
                       cachedDataType="wstr"
                       cachedLength="10"
                       cachedName="ModifiedDate"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]" />
                   </inputColumns>
                   <externalMetadataColumns
                     isUsed="True">
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      refId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
                       dataType="i4"
                       name="BusinessEntityID_nk" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      refId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
                       dataType="wstr"
                       length="50"
                       name="Title" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      refId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
                       dataType="wstr"
                       length="50"
                       name="FirstName" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      refId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
                       dataType="wstr"
                       length="50"
                       name="MiddleName" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      refId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
                       dataType="wstr"
                       length="50"
                       name="LastName" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      refId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
                       dataType="wstr"
                       length="25"
                       name="PhoneNumber" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      refId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
                       dataType="wstr"
                       length="50"
                       name="PhoneType" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      refId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
                       dataType="dbTimeStamp"
                       name="ModifiedDate" />
                   </externalMetadataColumns>
@@ -1291,22 +1324,22 @@
               </inputs>
               <outputs>
                 <output
-                  refId="Package\load stage\OLE DB Destination 3.Outputs[OLE DB Destination Error Output]"
+                  refId="Package\Load Stage\OLE DB Destination 3.Outputs[OLE DB Destination Error Output]"
                   exclusionGroup="1"
                   isErrorOut="true"
                   name="OLE DB Destination Error Output"
-                  synchronousInputId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input]">
+                  synchronousInputId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input]">
                   <outputColumns>
                     <outputColumn
-                      refId="Package\load stage\OLE DB Destination 3.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      refId="Package\Load Stage\OLE DB Destination 3.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
                       dataType="i4"
-                      lineageId="Package\load stage\OLE DB Destination 3.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      lineageId="Package\Load Stage\OLE DB Destination 3.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
                       name="ErrorCode"
                       specialFlags="1" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Destination 3.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      refId="Package\Load Stage\OLE DB Destination 3.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
                       dataType="i4"
-                      lineageId="Package\load stage\OLE DB Destination 3.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      lineageId="Package\Load Stage\OLE DB Destination 3.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
                       name="ErrorColumn"
                       specialFlags="2" />
                   </outputColumns>
@@ -1315,7 +1348,7 @@
               </outputs>
             </component>
             <component
-              refId="Package\load stage\OLE DB Destination 4"
+              refId="Package\Load Stage\OLE DB Destination 4"
               componentClassID="Microsoft.OLEDBDestination"
               contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
               description="OLE DB Destination"
@@ -1372,7 +1405,7 @@
               </properties>
               <connections>
                 <connection
-                  refId="Package\load stage\OLE DB Destination 4.Connections[OleDbConnection]"
+                  refId="Package\Load Stage\OLE DB Destination 4.Connections[OleDbConnection]"
                   connectionManagerID="Package.ConnectionManagers[AdventureWorksDWExtended]"
                   connectionManagerRefId="Package.ConnectionManagers[AdventureWorksDWExtended]"
                   description="The OLE DB runtime connection used to access the database."
@@ -1380,106 +1413,106 @@
               </connections>
               <inputs>
                 <input
-                  refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input]"
+                  refId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input]"
                   errorOrTruncationOperation="Insert"
                   errorRowDisposition="FailComponent"
                   hasSideEffects="true"
                   name="OLE DB Destination Input">
                   <inputColumns>
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[BusinessEntityID_nk]"
+                      refId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[BusinessEntityID_nk]"
                       cachedDataType="i4"
                       cachedName="BusinessEntityID_nk"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[Title]"
+                      refId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[Title]"
                       cachedDataType="wstr"
                       cachedLength="8"
                       cachedName="Title"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[FirstName]"
+                      refId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[FirstName]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="FirstName"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[MiddleName]"
+                      refId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[MiddleName]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="MiddleName"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[LastName]"
+                      refId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[LastName]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="LastName"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[PhoneNumber]"
+                      refId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[PhoneNumber]"
                       cachedDataType="wstr"
                       cachedLength="25"
                       cachedName="PhoneNumber"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[PhoneType]"
+                      refId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[PhoneType]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="PhoneType"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[ModifiedDate]"
+                      refId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].Columns[ModifiedDate]"
                       cachedDataType="wstr"
                       cachedLength="10"
                       cachedName="ModifiedDate"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]" />
                   </inputColumns>
                   <externalMetadataColumns
                     isUsed="True">
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      refId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
                       dataType="i4"
                       name="BusinessEntityID_nk" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      refId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
                       dataType="wstr"
                       length="50"
                       name="Title" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      refId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
                       dataType="wstr"
                       length="50"
                       name="FirstName" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      refId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
                       dataType="wstr"
                       length="50"
                       name="MiddleName" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      refId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
                       dataType="wstr"
                       length="50"
                       name="LastName" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      refId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
                       dataType="wstr"
                       length="25"
                       name="PhoneNumber" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      refId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
                       dataType="wstr"
                       length="50"
                       name="PhoneType" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      refId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
                       dataType="dbTimeStamp"
                       name="ModifiedDate" />
                   </externalMetadataColumns>
@@ -1487,22 +1520,22 @@
               </inputs>
               <outputs>
                 <output
-                  refId="Package\load stage\OLE DB Destination 4.Outputs[OLE DB Destination Error Output]"
+                  refId="Package\Load Stage\OLE DB Destination 4.Outputs[OLE DB Destination Error Output]"
                   exclusionGroup="1"
                   isErrorOut="true"
                   name="OLE DB Destination Error Output"
-                  synchronousInputId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input]">
+                  synchronousInputId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input]">
                   <outputColumns>
                     <outputColumn
-                      refId="Package\load stage\OLE DB Destination 4.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      refId="Package\Load Stage\OLE DB Destination 4.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
                       dataType="i4"
-                      lineageId="Package\load stage\OLE DB Destination 4.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      lineageId="Package\Load Stage\OLE DB Destination 4.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
                       name="ErrorCode"
                       specialFlags="1" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Destination 4.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      refId="Package\Load Stage\OLE DB Destination 4.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
                       dataType="i4"
-                      lineageId="Package\load stage\OLE DB Destination 4.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      lineageId="Package\Load Stage\OLE DB Destination 4.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
                       name="ErrorColumn"
                       specialFlags="2" />
                   </outputColumns>
@@ -1511,7 +1544,7 @@
               </outputs>
             </component>
             <component
-              refId="Package\load stage\OLE DB Destination 5"
+              refId="Package\Load Stage\OLE DB Destination 5"
               componentClassID="Microsoft.OLEDBDestination"
               contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
               description="OLE DB Destination"
@@ -1568,7 +1601,7 @@
               </properties>
               <connections>
                 <connection
-                  refId="Package\load stage\OLE DB Destination 5.Connections[OleDbConnection]"
+                  refId="Package\Load Stage\OLE DB Destination 5.Connections[OleDbConnection]"
                   connectionManagerID="Package.ConnectionManagers[AdventureWorksDWExtended]"
                   connectionManagerRefId="Package.ConnectionManagers[AdventureWorksDWExtended]"
                   description="The OLE DB runtime connection used to access the database."
@@ -1576,106 +1609,106 @@
               </connections>
               <inputs>
                 <input
-                  refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input]"
+                  refId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input]"
                   errorOrTruncationOperation="Insert"
                   errorRowDisposition="FailComponent"
                   hasSideEffects="true"
                   name="OLE DB Destination Input">
                   <inputColumns>
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[BusinessEntityID_nk]"
+                      refId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[BusinessEntityID_nk]"
                       cachedDataType="i4"
                       cachedName="BusinessEntityID_nk"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[Title]"
+                      refId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[Title]"
                       cachedDataType="wstr"
                       cachedLength="8"
                       cachedName="Title"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[FirstName]"
+                      refId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[FirstName]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="FirstName"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[MiddleName]"
+                      refId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[MiddleName]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="MiddleName"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[LastName]"
+                      refId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[LastName]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="LastName"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[PhoneNumber]"
+                      refId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[PhoneNumber]"
                       cachedDataType="wstr"
                       cachedLength="25"
                       cachedName="PhoneNumber"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[PhoneType]"
+                      refId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[PhoneType]"
                       cachedDataType="wstr"
                       cachedLength="50"
                       cachedName="PhoneType"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]" />
                     <inputColumn
-                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[ModifiedDate]"
+                      refId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].Columns[ModifiedDate]"
                       cachedDataType="wstr"
                       cachedLength="10"
                       cachedName="ModifiedDate"
-                      externalMetadataColumnId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]" />
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]" />
                   </inputColumns>
                   <externalMetadataColumns
                     isUsed="True">
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
+                      refId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[BusinessEntityID_nk]"
                       dataType="i4"
                       name="BusinessEntityID_nk" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
+                      refId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[Title]"
                       dataType="wstr"
                       length="50"
                       name="Title" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
+                      refId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[FirstName]"
                       dataType="wstr"
                       length="50"
                       name="FirstName" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
+                      refId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[MiddleName]"
                       dataType="wstr"
                       length="50"
                       name="MiddleName" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
+                      refId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[LastName]"
                       dataType="wstr"
                       length="50"
                       name="LastName" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
+                      refId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[PhoneNumber]"
                       dataType="wstr"
                       length="25"
                       name="PhoneNumber" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
+                      refId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[PhoneType]"
                       dataType="wstr"
                       length="50"
                       name="PhoneType" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
+                      refId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input].ExternalColumns[ModifiedDate]"
                       dataType="dbTimeStamp"
                       name="ModifiedDate" />
                   </externalMetadataColumns>
@@ -1683,22 +1716,22 @@
               </inputs>
               <outputs>
                 <output
-                  refId="Package\load stage\OLE DB Destination 5.Outputs[OLE DB Destination Error Output]"
+                  refId="Package\Load Stage\OLE DB Destination 5.Outputs[OLE DB Destination Error Output]"
                   exclusionGroup="1"
                   isErrorOut="true"
                   name="OLE DB Destination Error Output"
-                  synchronousInputId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input]">
+                  synchronousInputId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input]">
                   <outputColumns>
                     <outputColumn
-                      refId="Package\load stage\OLE DB Destination 5.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      refId="Package\Load Stage\OLE DB Destination 5.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
                       dataType="i4"
-                      lineageId="Package\load stage\OLE DB Destination 5.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      lineageId="Package\Load Stage\OLE DB Destination 5.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
                       name="ErrorCode"
                       specialFlags="1" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Destination 5.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      refId="Package\Load Stage\OLE DB Destination 5.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
                       dataType="i4"
-                      lineageId="Package\load stage\OLE DB Destination 5.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      lineageId="Package\Load Stage\OLE DB Destination 5.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
                       name="ErrorColumn"
                       specialFlags="2" />
                   </outputColumns>
@@ -1707,7 +1740,7 @@
               </outputs>
             </component>
             <component
-              refId="Package\load stage\OLE DB Source"
+              refId="Package\Load Stage\OLE DB Source"
               componentClassID="Microsoft.OLEDBSource"
               contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
               description="OLE DB Source"
@@ -1785,7 +1818,7 @@ Where pers.PersonType != 'EM'</property>
               </properties>
               <connections>
                 <connection
-                  refId="Package\load stage\OLE DB Source.Connections[OleDbConnection]"
+                  refId="Package\Load Stage\OLE DB Source.Connections[OleDbConnection]"
                   connectionManagerID="Package.ConnectionManagers[AdventureWorks2022]"
                   connectionManagerRefId="Package.ConnectionManagers[AdventureWorks2022]"
                   description="The OLE DB runtime connection used to access the database."
@@ -1793,194 +1826,194 @@ Where pers.PersonType != 'EM'</property>
               </connections>
               <outputs>
                 <output
-                  refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output]"
+                  refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output]"
                   name="OLE DB Source Output">
                   <outputColumns>
                     <outputColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]"
                       dataType="i4"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
-                      externalMetadataColumnId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[BusinessEntityID_nk]"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]"
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[BusinessEntityID_nk]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[BusinessEntityID_nk]"
                       name="BusinessEntityID_nk"
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]"
                       dataType="wstr"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
-                      externalMetadataColumnId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Title]"
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Title]"
                       length="8"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[Title]"
                       name="Title"
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]"
                       dataType="wstr"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
-                      externalMetadataColumnId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[FirstName]"
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[FirstName]"
                       length="50"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[FirstName]"
                       name="FirstName"
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]"
                       dataType="wstr"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
-                      externalMetadataColumnId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[MiddleName]"
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[MiddleName]"
                       length="50"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[MiddleName]"
                       name="MiddleName"
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]"
                       dataType="wstr"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
-                      externalMetadataColumnId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[LastName]"
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[LastName]"
                       length="50"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[LastName]"
                       name="LastName"
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]"
                       dataType="wstr"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
-                      externalMetadataColumnId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[PhoneNumber]"
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[PhoneNumber]"
                       length="25"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneNumber]"
                       name="PhoneNumber"
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]"
                       dataType="wstr"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
-                      externalMetadataColumnId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[PhoneType]"
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[PhoneType]"
                       length="50"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[PhoneType]"
                       name="PhoneType"
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]"
                       dataType="wstr"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
-                      externalMetadataColumnId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ModifiedDate]"
+                      externalMetadataColumnId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ModifiedDate]"
                       length="10"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].Columns[ModifiedDate]"
                       name="ModifiedDate"
                       truncationRowDisposition="FailComponent" />
                   </outputColumns>
                   <externalMetadataColumns
                     isUsed="True">
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[BusinessEntityID_nk]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[BusinessEntityID_nk]"
                       dataType="i4"
                       name="BusinessEntityID_nk" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Title]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Title]"
                       dataType="wstr"
                       length="8"
                       name="Title" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[FirstName]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[FirstName]"
                       dataType="wstr"
                       length="50"
                       name="FirstName" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[MiddleName]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[MiddleName]"
                       dataType="wstr"
                       length="50"
                       name="MiddleName" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[LastName]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[LastName]"
                       dataType="wstr"
                       length="50"
                       name="LastName" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[PhoneNumber]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[PhoneNumber]"
                       dataType="wstr"
                       length="25"
                       name="PhoneNumber" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[PhoneType]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[PhoneType]"
                       dataType="wstr"
                       length="50"
                       name="PhoneType" />
                     <externalMetadataColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ModifiedDate]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ModifiedDate]"
                       dataType="wstr"
                       length="10"
                       name="ModifiedDate" />
                   </externalMetadataColumns>
                 </output>
                 <output
-                  refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output]"
+                  refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output]"
                   isErrorOut="true"
                   name="OLE DB Source Error Output">
                   <outputColumns>
                     <outputColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[BusinessEntityID_nk]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[BusinessEntityID_nk]"
                       dataType="i4"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[BusinessEntityID_nk]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[BusinessEntityID_nk]"
                       name="BusinessEntityID_nk" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Title]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Title]"
                       dataType="wstr"
                       length="8"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Title]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Title]"
                       name="Title" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[FirstName]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[FirstName]"
                       dataType="wstr"
                       length="50"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[FirstName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[FirstName]"
                       name="FirstName" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[MiddleName]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[MiddleName]"
                       dataType="wstr"
                       length="50"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[MiddleName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[MiddleName]"
                       name="MiddleName" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[LastName]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[LastName]"
                       dataType="wstr"
                       length="50"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[LastName]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[LastName]"
                       name="LastName" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[PhoneNumber]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[PhoneNumber]"
                       dataType="wstr"
                       length="25"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[PhoneNumber]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[PhoneNumber]"
                       name="PhoneNumber" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[PhoneType]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[PhoneType]"
                       dataType="wstr"
                       length="50"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[PhoneType]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[PhoneType]"
                       name="PhoneType" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ModifiedDate]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ModifiedDate]"
                       dataType="wstr"
                       length="10"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ModifiedDate]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ModifiedDate]"
                       name="ModifiedDate" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
                       dataType="i4"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
                       name="ErrorCode"
                       specialFlags="1" />
                     <outputColumn
-                      refId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      refId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
                       dataType="i4"
-                      lineageId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      lineageId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
                       name="ErrorColumn"
                       specialFlags="2" />
                   </outputColumns>
@@ -1989,7 +2022,7 @@ Where pers.PersonType != 'EM'</property>
               </outputs>
             </component>
             <component
-              refId="Package\load stage\Row Count"
+              refId="Package\Load Stage\Row Count"
               componentClassID="Microsoft.RowCount"
               contactInfo="Row Count;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
               description="Counts rows as they pass through a data flow. For example, use the number of rows processed to determine whether or not to perform cleanup operations, or update text in an e-mail message to communicate processing status."
@@ -2002,7 +2035,7 @@ Where pers.PersonType != 'EM'</property>
               </properties>
               <inputs>
                 <input
-                  refId="Package\load stage\Row Count.Inputs[Row Count Input 1]"
+                  refId="Package\Load Stage\Row Count.Inputs[Row Count Input 1]"
                   hasSideEffects="true"
                   name="Row Count Input 1">
                   <externalMetadataColumns />
@@ -2010,9 +2043,9 @@ Where pers.PersonType != 'EM'</property>
               </inputs>
               <outputs>
                 <output
-                  refId="Package\load stage\Row Count.Outputs[Row Count Output 1]"
+                  refId="Package\Load Stage\Row Count.Outputs[Row Count Output 1]"
                   name="Row Count Output 1"
-                  synchronousInputId="Package\load stage\Row Count.Inputs[Row Count Input 1]">
+                  synchronousInputId="Package\Load Stage\Row Count.Inputs[Row Count Input 1]">
                   <externalMetadataColumns />
                 </output>
               </outputs>
@@ -2020,40 +2053,40 @@ Where pers.PersonType != 'EM'</property>
           </components>
           <paths>
             <path
-              refId="Package\load stage.Paths[Balanced Data Distributor Output 1]"
-              endId="Package\load stage\OLE DB Destination 1.Inputs[OLE DB Destination Input]"
+              refId="Package\Load Stage.Paths[Balanced Data Distributor Output 1]"
+              endId="Package\Load Stage\OLE DB Destination 1.Inputs[OLE DB Destination Input]"
               name="Balanced Data Distributor Output 1"
-              startId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 1]" />
+              startId="Package\Load Stage\bdd.Outputs[Balanced Data Distributor Output 1]" />
             <path
-              refId="Package\load stage.Paths[Balanced Data Distributor Output 2]"
-              endId="Package\load stage\OLE DB Destination 2.Inputs[OLE DB Destination Input]"
+              refId="Package\Load Stage.Paths[Balanced Data Distributor Output 2]"
+              endId="Package\Load Stage\OLE DB Destination 2.Inputs[OLE DB Destination Input]"
               name="Balanced Data Distributor Output 2"
-              startId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 2]" />
+              startId="Package\Load Stage\bdd.Outputs[Balanced Data Distributor Output 2]" />
             <path
-              refId="Package\load stage.Paths[Balanced Data Distributor Output 3]"
-              endId="Package\load stage\OLE DB Destination 3.Inputs[OLE DB Destination Input]"
+              refId="Package\Load Stage.Paths[Balanced Data Distributor Output 3]"
+              endId="Package\Load Stage\OLE DB Destination 3.Inputs[OLE DB Destination Input]"
               name="Balanced Data Distributor Output 3"
-              startId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 3]" />
+              startId="Package\Load Stage\bdd.Outputs[Balanced Data Distributor Output 3]" />
             <path
-              refId="Package\load stage.Paths[Balanced Data Distributor Output 4]"
-              endId="Package\load stage\OLE DB Destination 4.Inputs[OLE DB Destination Input]"
+              refId="Package\Load Stage.Paths[Balanced Data Distributor Output 4]"
+              endId="Package\Load Stage\OLE DB Destination 4.Inputs[OLE DB Destination Input]"
               name="Balanced Data Distributor Output 4"
-              startId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 4]" />
+              startId="Package\Load Stage\bdd.Outputs[Balanced Data Distributor Output 4]" />
             <path
-              refId="Package\load stage.Paths[Balanced Data Distributor Output 5]"
-              endId="Package\load stage\OLE DB Destination 5.Inputs[OLE DB Destination Input]"
+              refId="Package\Load Stage.Paths[Balanced Data Distributor Output 5]"
+              endId="Package\Load Stage\OLE DB Destination 5.Inputs[OLE DB Destination Input]"
               name="Balanced Data Distributor Output 5"
-              startId="Package\load stage\bdd.Outputs[Balanced Data Distributor Output 5]" />
+              startId="Package\Load Stage\bdd.Outputs[Balanced Data Distributor Output 5]" />
             <path
-              refId="Package\load stage.Paths[OLE DB Source Output]"
-              endId="Package\load stage\Row Count.Inputs[Row Count Input 1]"
+              refId="Package\Load Stage.Paths[OLE DB Source Output]"
+              endId="Package\Load Stage\Row Count.Inputs[Row Count Input 1]"
               name="OLE DB Source Output"
-              startId="Package\load stage\OLE DB Source.Outputs[OLE DB Source Output]" />
+              startId="Package\Load Stage\OLE DB Source.Outputs[OLE DB Source Output]" />
             <path
-              refId="Package\load stage.Paths[Row Count Output 1]"
-              endId="Package\load stage\bdd.Inputs[Balanced Data Distributor Input]"
+              refId="Package\Load Stage.Paths[Row Count Output 1]"
+              endId="Package\Load Stage\bdd.Inputs[Balanced Data Distributor Input]"
               name="Row Count Output 1"
-              startId="Package\load stage\Row Count.Outputs[Row Count Output 1]" />
+              startId="Package\Load Stage\Row Count.Outputs[Row Count Output 1]" />
           </paths>
         </pipeline>
       </DTS:ObjectData>
@@ -2081,17 +2114,18 @@ Where pers.PersonType != 'EM'</property>
       DTS:refId="Package\Type1_and_3_SCD_changes"
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:Description="Execute SQL Task"
+      DTS:Disabled="True"
       DTS:DTSID="{75D8D96C-97FE-49FE-9BF5-22C0062B0021}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="Type1_and_3_SCD_changes"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="3">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{491675FB-4A47-43C8-88D3-C6890C9E484C}"
-          SQLTask:SqlStatementSource="/*********insert and update rows in SCD dimension for type 1 and 3 changes************************************/&#xA;USE AdventureWorksDWExtended&#xA;--sql to load DimCustomer where:&#xA;&#x9;/*&#xA;&#x9;[Title]&#x9;&#x9;&#x9;= Type 1&#xA;&#x9;[FirstName]&#x9;&#x9;= Type 2&#xA;&#x9;[MiddleName]&#x9;= Type 2&#xA;&#x9;[LastName]&#x9;&#x9;= Type 2&#xA;&#x9;[PhoneNumber]&#x9;= Type 3&#xA;&#x9;[PhoneType]&#x9;&#x9;= Type 1&#xA;&#x9;*/&#xA;/***********************************************************************/&#xA;--run in ssis:&#xA;&#x9;Declare @PackageStartDate as datetime = ?&#xA;/***********************************************************************/&#xA;/**********************************************************************&#xA;--run in ssms:  &#xA;&#x9;Declare @PackageStartDate as datetime = getdate()&#xA;**********************************************************************/&#xA;&#x9;Declare @CurrentExpirationDate as datetime =&#x9;getdate()&#x9;&#x9;--Convert(date,'12/31/9999') --use convert to date for daily load of records and getdate for anytime load&#xA;&#xA;&#x9;--Type 1 and 3 updates and inserts&#xA;&#x9;MERGE INTO AdventureWorksDWExtended.dbo.DimCustomer as tgt&#xA;&#x9;USING AdventureWorksDWExtended.stage.DimCustomer src &#xA;&#x9;&#x9;ON tgt.[BusinessEntityID_nk] = src.[BusinessEntityID_nk]&#xA;&#x9;WHEN MATCHED AND EXISTS&#x9; --business key exists and type1 or type3 column changes:&#xA;&#x9;(&#xA;&#x9;&#x9;&#x9;SELECT&#xA;&#x9;&#x9;&#x9;&#x9;src.PhoneNumber&#x9;&#x9;&#x9;--type3&#xA;&#x9;&#x9;&#x9;&#x9;,src.Title&#x9;&#x9;&#x9;&#x9;--type1&#xA;&#x9;&#x9;&#x9;&#x9;,src.PhoneType&#x9;&#x9;&#x9;--type1&#xA;&#x9;&#x9;&#x9;EXCEPT&#xA;&#x9;&#x9;&#x9;SELECT&#xA;&#x9;&#x9;&#x9;&#x9;tgt.PhoneNumber_curr&#xA;&#x9;&#x9;&#x9;&#x9;,tgt.Title&#xA;&#x9;&#x9;&#x9;&#x9;,tgt.PhoneType&#xA;&#x9;)&#xA;&#x9;THEN UPDATE&#x9;&#x9;&#xA;&#x9;SET &#xA;&#x9;&#x9;tgt.Title = src.Title&#xA;&#x9;&#x9;,tgt.PhoneNumber_curr = src.PhoneNumber&#xA;&#x9;&#x9;,tgt.PhoneNumber_prev = &#xA;&#x9;&#x9;&#x9;CASE &#xA;&#x9;&#x9;&#x9;WHEN &#xA;&#x9;&#x9;&#x9;&#x9;(src.PhoneNumber &lt;&gt; tgt.PhoneNumber_curr)&#x9;&#x9;&#x9;--type 3&#xA;&#x9;&#x9;&#x9;&#x9;and&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--type 6, for type 3 only remove this&#xA;&#x9;&#x9;&#x9;&#x9;(tgt.IsCurrentRow = 1)&#xA;&#x9;&#x9;&#x9;THEN tgt.PhoneNumber_curr&#xA;&#x9;&#x9;&#x9;WHEN &#xA;&#x9;&#x9;&#x9;&#x9;(tgt.PhoneNumber_curr &lt;&gt; tgt.PhoneNumber_prev)&#x9;&#x9;&#x9;--type 3&#xA;&#x9;&#x9;&#x9;&#x9;and&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--type 6, for type 3 only remove this&#xA;&#x9;&#x9;&#x9;&#x9;(tgt.IsCurrentRow = 0)&#xA;&#x9;&#x9;&#x9;THEN tgt.PhoneNumber_curr&#xA;&#x9;&#x9;&#x9;ELSE tgt.PhoneNumber_prev&#xA;&#x9;&#x9;&#x9;END&#xA;&#x9;&#x9;,tgt.PhoneType = src.PhoneType&#xA;&#x9;&#x9;,tgt.DateUpdated = @PackageStartDate&#xA;&#x9;WHEN NOT MATCHED BY TARGET THEN INSERT&#xA;&#x9;(&#xA;&#x9;&#x9;[BusinessEntityID_nk],&#xA;&#x9;&#x9;[Title],&#xA;&#x9;&#x9;[FirstName],&#xA;&#x9;&#x9;[MiddleName],&#xA;&#x9;&#x9;[LastName],&#xA;&#x9;&#x9;[PhoneNumber_curr],&#xA;&#x9;&#x9;[PhoneNumber_prev],&#xA;&#x9;&#x9;[PhoneType],&#xA;&#x9;&#x9;[EffectiveDate],&#xA;&#x9;&#x9;[ExpirationDate],&#xA;&#x9;&#x9;[DateInserted],&#xA;&#x9;&#x9;[DateUpdated],&#xA;&#x9;&#x9;[IsCurrentRow]&#xA;&#x9;)&#xA;&#x9;VALUES&#xA;&#x9;(&#xA;&#x9;&#x9;src.[BusinessEntityID_nk]&#xA;&#x9;&#x9;,src.Title&#xA;&#x9;&#x9;,src.FirstName&#xA;&#x9;&#x9;,src.MiddleName&#xA;&#x9;&#x9;,src.LastName&#xA;&#x9;&#x9;,src.PhoneNumber&#xA;&#x9;&#x9;,'000000000'&#xA;&#x9;&#x9;,src.PhoneType&#xA;&#x9;&#x9;,src.[ModifiedDate]&#xA;&#x9;&#x9;,@CurrentExpirationDate&#xA;&#x9;&#x9;,@PackageStartDate&#xA;&#x9;&#x9;,@PackageStartDate&#xA;&#x9;&#x9;,Cast(1 as bit)&#xA;&#x9;);&#xA;&#xA;&#x9;SELECT [RowCount] = COUNT(*)&#xA;&#x9;FROM dbo.DimCustomer&#xA;&#x9;WHERE &#xA;&#x9;&#x9;DateInserted = @PackageStartDate &#xA;&#x9;&#x9;OR &#xA;&#x9;&#x9;DateUpdated = @PackageStartDate;"
+          SQLTask:SqlStatementSource="/*************************************************************************&#xA;Purpose: insert and update rows in SCD dimension for type 1 and 3 changes&#xA;*************************************************************************/&#xA;&#xA;USE AdventureWorksDWExtended&#xA;--sql to load DimCustomer where:&#xA;&#x9;/*&#xA;&#x9;[Title]&#x9;&#x9;&#x9;= Type 1&#xA;&#x9;[FirstName]&#x9;&#x9;= Type 2&#xA;&#x9;[MiddleName]&#x9;= Type 2&#xA;&#x9;[LastName]&#x9;&#x9;= Type 2&#xA;&#x9;[PhoneNumber]&#x9;= Type 3&#xA;&#x9;[PhoneType]&#x9;&#x9;= Type 1&#xA;&#x9;*/&#xA;/***********************************************************************/&#xA;--run in ssis:&#xA;&#x9;Declare @PackageStartDate as datetime = ?&#xA;/***********************************************************************/&#xA;/**********************************************************************&#xA;--run in ssms:  &#xA;&#x9;Declare @PackageStartDate as datetime = getdate()&#xA;**********************************************************************/&#xA;&#x9;Declare @CurrentExpirationDate as datetime =&#x9;getdate()&#x9;&#x9;--Convert(date,'12/31/9999') --use convert to date for daily load of records and getdate for anytime load&#xA;&#xA;&#x9;--Type 1 and 3 updates and inserts&#xA;&#x9;MERGE INTO AdventureWorksDWExtended.dbo.DimCustomer as tgt&#xA;&#x9;USING AdventureWorksDWExtended.stage.DimCustomer src &#xA;&#x9;&#x9;ON tgt.[BusinessEntityID_nk] = src.[BusinessEntityID_nk]&#xA;&#x9;WHEN MATCHED AND tgt.PhoneNumber_Curr &lt;&gt; src.PhoneNumber AND EXISTS&#x9; --business key exists and type1 or type3 column changes:&#xA;&#x9;(&#xA;&#x9;&#x9;&#x9;SELECT&#xA;&#x9;&#x9;&#x9;&#x9;src.PhoneNumber&#x9;&#x9;&#x9;--type3&#xA;&#x9;&#x9;&#x9;&#x9;,src.Title&#x9;&#x9;&#x9;&#x9;--type1&#xA;&#x9;&#x9;&#x9;&#x9;,src.PhoneType&#x9;&#x9;&#x9;--type1&#xA;&#x9;&#x9;&#x9;EXCEPT&#xA;&#x9;&#x9;&#x9;SELECT&#xA;&#x9;&#x9;&#x9;&#x9;tgt.PhoneNumber_curr&#xA;&#x9;&#x9;&#x9;&#x9;,tgt.Title&#xA;&#x9;&#x9;&#x9;&#x9;,tgt.PhoneType&#xA;&#x9;)&#xA;&#x9;THEN UPDATE&#x9;SET &#xA;&#x9;&#x9;tgt.PhoneNumber_prev = tgt.PhoneNumber_curr,&#xA;&#x9;&#x9;tgt.PhoneNumber_curr = src.PhoneNumber&#xA;&#x9;&#x9;--tgt.Title = src.Title&#xA;&#x9;&#x9;--,tgt.PhoneNumber_curr = src.PhoneNumber&#xA;&#x9;&#x9;--,tgt.PhoneNumber_prev = &#xA;&#x9;&#x9;--&#x9;CASE &#xA;&#x9;&#x9;--&#x9;WHEN &#xA;&#x9;&#x9;--&#x9;&#x9;(src.PhoneNumber &lt;&gt; tgt.PhoneNumber_curr)&#x9;&#x9;&#x9;--type 3&#xA;&#x9;&#x9;--&#x9;&#x9;and&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--type 6, for type 3 only remove this&#xA;&#x9;&#x9;--&#x9;&#x9;(tgt.IsCurrentRow = 1)&#xA;&#x9;&#x9;--&#x9;THEN tgt.PhoneNumber_curr&#xA;&#x9;&#x9;--&#x9;WHEN &#xA;&#x9;&#x9;--&#x9;&#x9;(tgt.PhoneNumber_curr &lt;&gt; tgt.PhoneNumber_prev)&#x9;&#x9;&#x9;--type 3&#xA;&#x9;&#x9;--&#x9;&#x9;and&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--type 6, for type 3 only remove this&#xA;&#x9;&#x9;--&#x9;&#x9;(tgt.IsCurrentRow = 0)&#xA;&#x9;&#x9;--&#x9;THEN tgt.PhoneNumber_curr&#xA;&#x9;&#x9;--&#x9;ELSE tgt.PhoneNumber_prev&#xA;&#x9;&#x9;--&#x9;END&#xA;&#x9;&#x9;,tgt.PhoneType = src.PhoneType&#xA;&#x9;&#x9;,tgt.DateUpdated = @PackageStartDate;&#xA;&#xA;&#x9;SELECT [RowCount] = COUNT(*)&#xA;&#x9;FROM dbo.DimCustomer&#xA;&#x9;WHERE &#xA;&#x9;&#x9;DateInserted = @PackageStartDate &#xA;&#x9;&#x9;OR &#xA;&#x9;&#x9;DateUpdated = @PackageStartDate;"
           SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ResultBinding
             SQLTask:ResultName="RowCount"
@@ -2109,17 +2143,18 @@ Where pers.PersonType != 'EM'</property>
       DTS:refId="Package\Type2 SCD changes"
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:Description="Execute SQL Task"
+      DTS:Disabled="True"
       DTS:DTSID="{DC95F53B-F60C-4382-BB85-5F187F4633C2}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="Type2 SCD changes"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="3">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{491675FB-4A47-43C8-88D3-C6890C9E484C}"
-          SQLTask:SqlStatementSource="/****************************&#xA;Purpose:&#x9;&#x9;inserts and updates for SCD dimension type 2 changes&#xA;&#xA;&#x9;[Title]&#x9;&#x9;&#x9;= Type 1&#xA;&#x9;[FirstName]&#x9;&#x9;= Type 2&#xA;&#x9;[MiddleName]&#x9;= Type 2&#xA;&#x9;[LastName]&#x9;&#x9;= Type 2&#xA;&#x9;[PhoneNumber]&#x9;= Type 3&#xA;&#x9;[PhoneType]&#x9;&#x9;= Type 1&#xA;************************************************************************************************************/&#xA;USE AdventureWorksDWExtended&#xA;&#xA;/***********************************************************************/&#xA;--run in ssis:&#xA;&#x9;Declare @PackageStartDate as datetime = ?&#xA;/***********************************************************************/&#xA;/**********************************************************************&#xA;--run in ssms:  &#xA;&#x9;Declare @PackageStartDate as datetime = getdate()&#xA;**********************************************************************/&#xA;&#x9;Declare @CurrentExpirationDate as datetime = Convert(date,'12/31/9999')&#xA;&#x9;Declare @RowsProcessed as int;&#xA;&#x9;&#xA;&#x9;IF OBJECT_ID('tempdb..#DimCustomertemp') IS NOT NULL&#xA;&#x9;&#x9;DROP TABLE #DimCustomertemp;&#xA;&#xA;&#x9;CREATE TABLE #DimCustomertemp&#xA;&#x9;(&#xA;&#x9;&#x9;[BusinessEntityID_nk] [int] NOT NULL,&#xA;&#x9;&#x9;[Title] [nvarchar](50) NULL,&#xA;&#x9;&#x9;[FirstName] [nvarchar](50) NULL,&#xA;&#x9;&#x9;[MiddleName] [nvarchar](50) NULL,&#xA;&#x9;&#x9;[LastName] [nvarchar](50) NULL,&#xA;&#x9;&#x9;[PhoneNumber_curr] [nvarchar](25) NULL,&#xA;&#x9;&#x9;[PhoneNumber_prev] [nvarchar](25) NULL,&#xA;&#x9;&#x9;[PhoneType] [nvarchar](50) NULL,&#xA;&#x9;&#x9;[EffectiveDate] [datetime] NULL,&#xA;&#x9;&#x9;[ExpirationDate] [datetime] NULL,&#xA;&#x9;&#x9;[DateInserted] [datetime] NULL,&#xA;&#x9;&#x9;[DateUpdated] [datetime] NULL,&#xA;&#x9;&#x9;[IsCurrentRow] [bit] NULL&#xA;&#x9;);&#xA;&#xA;&#x9;--Type 2 inserts and updates&#xA;&#x9;INSERT INTO #DimCustomertemp&#xA;&#x9;(&#xA;&#x9;&#x9;[BusinessEntityID_nk]&#xA;&#x9;&#x9;,[Title]&#xA;&#x9;&#x9;,[FirstName]&#xA;&#x9;&#x9;,[MiddleName]&#xA;&#x9;&#x9;,[LastName] &#xA;&#x9;&#x9;,[PhoneNumber_curr]&#xA;&#x9;&#x9;,[PhoneNumber_prev]&#xA;&#x9;&#x9;,[PhoneType]&#xA;&#x9;&#x9;,[EffectiveDate]&#xA;&#x9;&#x9;,[ExpirationDate]&#xA;&#x9;&#x9;,[DateInserted]&#xA;&#x9;&#x9;,[DateUpdated]&#xA;&#x9;&#x9;,[IsCurrentRow]&#xA;&#x9;)&#xA;&#x9;SELECT &#xA;&#x9;&#x9;[BusinessEntityID_nk]&#xA;&#x9;&#x9;,[Title]&#xA;&#x9;&#x9;,[FirstName]&#xA;&#x9;&#x9;,[MiddleName]&#xA;&#x9;&#x9;,[LastName]&#xA;&#x9;&#x9;,[PhoneNumber_curr]&#xA;&#x9;&#x9;,[PhoneNumber_prev]&#xA;&#x9;&#x9;,[PhoneType]&#xA;&#x9;&#x9;,[EffectiveDate]&#xA;&#x9;&#x9;,[ExpirationDate]&#xA;&#x9;&#x9;,[DateInserted]&#xA;&#x9;&#x9;,[DateUpdated]&#xA;&#x9;&#x9;,[IsCurrentRow]&#xA;    FROM &#xA;&#x9;(&#xA;&#x9;&#x9;MERGE INTO dbo.DimCustomer as tgt&#xA;&#x9;&#x9;USING stage.DimCustomer as src &#xA;&#x9;&#x9;&#x9;ON tgt.BusinessEntityID_nk = src.BusinessEntityID_nk&#xA;&#x9;&#x9;WHEN MATCHED AND tgt.[ExpirationDate] = @CurrentExpirationDate AND EXISTS &#xA;&#x9;&#x9;(&#x9;&#xA;&#x9;&#x9;&#x9;SELECT &#xA;&#x9;&#x9;&#x9;&#x9;src.[FirstName]&#x9;&#x9;-- Type 2&#xA;&#x9;&#x9;&#x9;&#x9;,src.[MiddleName]&#x9;-- Type 2&#xA;&#x9;&#x9;&#x9;&#x9;,src.[LastName]&#x9;&#x9;-- Type 2&#xA;&#x9;&#x9;&#x9;EXCEPT &#xA;&#x9;&#x9;&#x9;SELECT &#xA;&#x9;&#x9;&#x9;&#x9;tgt.[FirstName]&#xA;&#x9;&#x9;&#x9;&#x9;,tgt.[MiddleName]&#xA;&#x9;&#x9;&#x9;&#x9;,tgt.[LastName]&#xA;&#x9;&#x9;)&#xA;&#x9;&#x9;THEN UPDATE&#xA;&#x9;&#x9;SET &#xA;&#x9;&#x9;&#x9;tgt.[ExpirationDate] = DateAdd(minute,-1,src.ModifiedDate),&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--expired date of row is yesterday from modified date from stage.DimCustomer, anytime run&#xA;&#x9;&#x9;&#x9;--tgt.[ExpirationDate] = Convert(date,DateAdd(day,-1,src.ModifiedDate)),&#x9;&#x9;--expired date of row is yesterday from modified date from stage.DimCustomer, daily run only&#xA;&#x9;&#x9;&#x9;tgt.[DateUpdated] = @PackageStartDate,&#xA;&#x9;&#x9;&#x9;tgt.[IsCurrentRow] = Cast(0 as bit)&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--set historical row IsCurrentRow = 0&#xA;&#x9;&#x9;WHEN NOT MATCHED BY TARGET THEN INSERT&#xA;&#x9;&#x9;(&#xA;&#x9;&#x9;&#x9;[BusinessEntityID_nk]&#xA;&#x9;&#x9;&#x9;,[Title]&#xA;&#x9;&#x9;&#x9;,[FirstName]&#xA;&#x9;&#x9;&#x9;,[MiddleName]&#xA;&#x9;&#x9;&#x9;,[LastName]&#xA;&#x9;&#x9;&#x9;,[PhoneNumber_curr]&#xA;&#x9;&#x9;&#x9;,[PhoneNumber_prev]&#xA;&#x9;&#x9;&#x9;,[PhoneType]&#xA;&#x9;&#x9;&#x9;,[EffectiveDate]&#xA;&#x9;&#x9;&#x9;,[ExpirationDate]&#xA;&#x9;&#x9;&#x9;,[DateInserted]&#xA;&#x9;&#x9;&#x9;,[DateUpdated]&#xA;&#x9;&#x9;&#x9;,[IsCurrentRow]&#xA;&#x9;&#x9;)&#xA;&#x9;&#x9;VALUES&#xA;&#x9;&#x9;(&#xA;&#x9;&#x9;&#x9; src.[BusinessEntityID_nk]&#xA;&#x9;&#x9;&#x9;,src.[Title]&#xA;&#x9;&#x9;&#x9;,src.[FirstName]&#xA;&#x9;&#x9;&#x9;,src.[MiddleName]&#xA;&#x9;&#x9;&#x9;,src.[LastName]&#xA;&#x9;&#x9;&#x9;,src.[PhoneNumber]&#xA;&#x9;&#x9;&#x9;,'0000000000'&#xA;&#x9;&#x9;&#x9;,src.[PhoneType]&#xA;&#x9;&#x9;&#x9;,src.ModifiedDate&#xA;&#x9;&#x9;&#x9;,@CurrentExpirationDate&#xA;&#x9;&#x9;&#x9;,@PackageStartDate&#xA;&#x9;&#x9;&#x9;,@PackageStartDate&#xA;&#x9;&#x9;&#x9;,Cast(1 as bit)&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--set current row IsCurrentRow = 1&#xA;&#x9;&#x9;)&#xA;&#x9;&#x9;OUTPUT $ACTION ActionOut, &#xA;&#x9;&#x9;&#x9;src.[BusinessEntityID_nk]&#xA;&#x9;&#x9;&#x9;,src.[Title]&#xA;&#x9;&#x9;&#x9;,src.[FirstName]&#xA;&#x9;&#x9;&#x9;,src.[MiddleName]&#xA;&#x9;&#x9;&#x9;,src.[LastName]&#xA;&#x9;&#x9;&#x9;,src.[PhoneNumber] as 'PhoneNumber_curr'&#xA;&#x9;&#x9;&#x9;,INSERTED.PhoneNumber_prev as 'PhoneNumber_prev'&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--WHEN MATCHED row&#xA;&#x9;&#x9;&#x9;,src.[PhoneType]&#xA;&#x9;&#x9;&#x9;,src.[ModifiedDate] as 'EffectiveDate'&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--anytime process&#xA;&#x9;&#x9;&#x9;--,Convert(date,src.[ModifiedDate]) as 'EffectiveDate'&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--daily process&#xA;&#x9;&#x9;&#x9;,@CurrentExpirationDate as 'ExpirationDate'&#xA;&#x9;&#x9;&#x9;,@PackageStartDate as 'DateInserted'&#xA;&#x9;&#x9;&#x9;,@PackageStartDate as 'DateUpdated'&#xA;&#x9;&#x9;&#x9;,Cast(1 as bit) as 'IsCurrentRow'&#xA;&#x9;) AS MergeOut&#xA;&#x9;WHERE  MergeOut.ActionOut = 'UPDATE';&#xA;&#xA;&#x9;/*&#xA;&#x9;We use a temp table, and then insert into the dimension table, to avoid this error message:&#xA;&#x9;&#x9;&quot;The target table 'TableName' of the INSERT statement cannot be on either side of a (primary key, foreign key) relationship &#xA;&#x9;&#x9;when the FROM clause contains a nested INSERT, UPDATE, DELETE, or MERGE statement. Found reference constraint 'ConstraintName'.&quot;&#xA;&#xA;&#x9;This only applies if the dimension table has foreign key relationships defined&#xA;&#x9;*/&#xA;&#x9;INSERT INTO dbo.DimCustomer&#xA;&#x9;(&#xA;&#x9;&#x9;[BusinessEntityID_nk]&#xA;&#x9;&#x9;,[Title]&#xA;&#x9;&#x9;,[FirstName]&#xA;&#x9;&#x9;,[MiddleName]&#xA;&#x9;&#x9;,[LastName] &#xA;&#x9;&#x9;,[PhoneNumber_curr]&#xA;&#x9;&#x9;,[PhoneNumber_prev] &#xA;&#x9;&#x9;,[PhoneType]&#xA;&#x9;&#x9;,[EffectiveDate]&#xA;&#x9;&#x9;,[ExpirationDate]&#xA;&#x9;&#x9;,[DateInserted]&#xA;&#x9;&#x9;,[DateUpdated]&#xA;&#x9;&#x9;,[IsCurrentRow]&#xA;&#x9;)&#xA;&#x9;SELECT &#xA;&#x9;&#x9;[BusinessEntityID_nk]&#xA;&#x9;&#x9;,[Title]&#xA;&#x9;&#x9;,[FirstName]&#xA;&#x9;&#x9;,[MiddleName]&#xA;&#x9;&#x9;,[LastName]&#xA;&#x9;&#x9;,[PhoneNumber_curr]&#xA;&#x9;&#x9;,[PhoneNumber_prev]&#xA;&#x9;&#x9;,[PhoneType]&#xA;&#x9;&#x9;,[EffectiveDate]&#xA;&#x9;&#x9;,[ExpirationDate]&#xA;&#x9;&#x9;,[DateInserted]&#xA;&#x9;&#x9;,[DateUpdated]&#xA;&#x9;&#x9;,[IsCurrentRow]&#xA;&#x9;FROM #DimCustomertemp;&#xA;&#xA;&#x9;IF OBJECT_ID('tempdb..#DimCustomertemp') IS NOT NULL&#xA;    DROP TABLE #DimCustomertemp;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          SQLTask:SqlStatementSource="--test SCD, make sure parameter for ServerName != 'prodserver' and Reload = false&#xA;--1) Run package to initially load DimCustomer&#xA;/**************************************************************/&#xA;&#xA;&#xA;--2) Run this to check initial load:&#xA;SELECT * FROM [AdventureWorksDWExtended].[stage].[DimCustomer]&#xA;Where BusinessEntityID_nk in (29484,29485,29486)&#xA;Order By BusinessEntityID_nk&#xA;&#xA;--3) Verify load to DimCustomer:&#xA;/**************************************************************/&#xA;SELECT * FROM [AdventureWorksDWExtended].[dbo].[DimCustomer]&#xA;Where BusinessEntityID_nk in (29484,29485,29486)&#xA;Order By BusinessEntityID_nk, EffectiveDate&#xA;&#xA;SELECT TOP (1) * FROM [AdventureWorksDWExtended].[dbo].[Audit] Order By AuditId desc&#xA;&#xA;/**************************************************************/&#xA;&#xA;--3) Updates to test function of SCD:&#xA;/*&#xA;UPDATE [AdventureWorksDWExtended].[stage].[DimCustomer]&#xA;SET&#xA;&#x9;Title = 'Mss'&#xA;&#x9;,MiddleName = 'X'&#xA;&#x9;,PhoneNumber = '3339991111'&#xA;&#x9;,ModifiedDate = GetDate()&#xA;WHERE BusinessEntityID_nk = '29484'&#xA;&#xA;UPDATE [AdventureWorksDWExtended].[stage].[DimCustomer]&#xA;SET&#xA;&#x9;Title = 'Mss'&#xA;&#x9;,MiddleName = 'X'&#xA;&#x9;,PhoneNumber = '2229991111'&#xA;&#x9;,ModifiedDate = GetDate()&#xA;WHERE BusinessEntityID_nk = '29485'&#xA;&#xA;UPDATE [AdventureWorksDWExtended].[stage].[DimCustomer]&#xA;SET&#xA;&#x9;Title = 'Mss'&#xA;&#x9;,MiddleName = 'X'&#xA;&#x9;,PhoneNumber = '1119991111'&#xA;&#x9;,ModifiedDate = GetDate()&#xA;WHERE BusinessEntityID_nk = '29486'&#xA;*/&#x9;&#xA;/**************************************************************/&#xA;--4) Disable task: 'Recreate stage' table and dataflow: 'Load Stage'&#xA;&#xA;--5) Check load of changed records:&#xA;SELECT * FROM [AdventureWorksDWExtended].[stage].[DimCustomer]&#xA;Where BusinessEntityID_nk in (29484,29485,29486)&#xA;Order By BusinessEntityID_nk&#xA;&#xA;/**************************************************************/&#xA;&#xA;--6) Run package LoadSCDtemplate.dtsx&#xA;&#xA;--7) Verify changes to DimCustomer:&#xA;/**************************************************************/&#xA;&#xA;SELECT * FROM [AdventureWorksDWExtended].[dbo].[DimCustomer]&#xA;Where BusinessEntityID_nk in (29484,29485,29486)&#xA;Order By BusinessEntityID_nk, EffectiveDate&#xA;&#xA;&#xA;/*&#xA;UPDATE [AdventureWorksDWExtended].[stage].[DimCustomer]&#xA;SET&#xA;&#x9;PhoneNumber = '3339992222'&#xA;&#x9;,ModifiedDate = GetDate()&#xA;WHERE BusinessEntityID_nk = '29484'&#xA;&#xA;UPDATE [AdventureWorksDWExtended].[stage].[DimCustomer]&#xA;SET&#xA;&#x9;PhoneNumber = '2229992222'&#xA;&#x9;,ModifiedDate = GetDate()&#xA;WHERE BusinessEntityID_nk = '29485'&#xA;&#xA;UPDATE [AdventureWorksDWExtended].[stage].[DimCustomer]&#xA;SET&#xA;&#x9;PhoneNumber = '1119992222'&#xA;&#x9;,ModifiedDate = GetDate()&#xA;WHERE BusinessEntityID_nk = '29486'&#xA;*/&#x9;&#xA;&#xA;&#xA;/**************************************************************/&#xA;&#xA;SELECT * FROM [AdventureWorksDWExtended].[dbo].[DimCustomer]&#xA;Where BusinessEntityID_nk in (29484,29485,29486)&#xA;Order By BusinessEntityID_nk, EffectiveDate" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ParameterBinding
             SQLTask:ParameterName="0"
             SQLTask:DtsVariableName="System::StartTime"
@@ -2134,7 +2169,10 @@ Where pers.PersonType != 'EM'</property>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint]"
       DTS:CreationName=""
-      DTS:DTSID="{82B89566-CD50-413D-A1BD-0F5A766B317F}"
+      DTS:Description="Initial test run or Reload"
+      DTS:DTSID="{760D087C-4212-4D2F-8F58-A2B7CEE785D5}"
+      DTS:EvalOp="3"
+      DTS:Expression="@[$Package::TestSCDProcess] &amp;&amp; @[$Project::Reload]"
       DTS:From="Package\Check existence of stage schema"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint"
@@ -2154,14 +2192,24 @@ Where pers.PersonType != 'EM'</property>
       DTS:From="Package\Recreate stage table"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 2"
-      DTS:To="Package\load stage" />
+      DTS:To="Package\Load Stage" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 3]"
+      DTS:CreationName=""
+      DTS:Description="test next step"
+      DTS:DTSID="{98019734-F0E0-4E86-ACD6-584E9BB4ECE4}"
+      DTS:EvalOp="3"
+      DTS:Expression="@[$Package::TestSCDProcess] &amp;&amp; !@[$Project::Reload]"
+      DTS:From="Package\Check existence of stage schema"
+      DTS:ObjectName="Constraint 3"
+      DTS:To="Package\Load SCD attributes 1,2,6" />
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 4]"
       DTS:CreationName=""
-      DTS:DTSID="{15F7D8C6-F530-4B6F-8BC0-DC26C7D4AF4E}"
+      DTS:DTSID="{B58C91FA-AA86-46AC-A68A-46B645BA04CF}"
       DTS:From="Package\Drop and recreate SCD table"
       DTS:ObjectName="Constraint 4"
-      DTS:To="Package\Type2 SCD changes" />
+      DTS:To="Package\Load SCD attributes 1,2,6" />
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 5]"
       DTS:CreationName=""
@@ -2178,43 +2226,44 @@ Where pers.PersonType != 'EM'</property>
       DTS:ObjectName="Constraint 6"
       DTS:To="Package\AuditUpdateRow Completed" />
     <DTS:PrecedenceConstraint
-      DTS:refId="Package.PrecedenceConstraints[Incremental SCD load]"
+      DTS:refId="Package.PrecedenceConstraints[Constraint 7]"
       DTS:CreationName=""
-      DTS:DTSID="{7DF734FE-D699-415A-ABDE-AF114072E663}"
-      DTS:EvalOp="3"
-      DTS:Expression="!@[$Project::Reload]"
-      DTS:From="Package\load stage"
-      DTS:ObjectName="Incremental SCD load"
-      DTS:To="Package\Type2 SCD changes" />
-    <DTS:PrecedenceConstraint
-      DTS:refId="Package.PrecedenceConstraints[non prod server]"
-      DTS:CreationName=""
-      DTS:DTSID="{8B2DB4EA-5086-49D0-8424-49E22AF1027B}"
+      DTS:Description="non prod server"
+      DTS:DTSID="{8E4B1FC9-6915-4D4E-9EEF-B7245582C127}"
       DTS:EvalOp="3"
       DTS:Expression="@[$Project::ServerName]==&quot;nonprodserver&quot;"
-      DTS:From="Package\Type1_and_3_SCD_changes"
-      DTS:ObjectName="non prod server"
+      DTS:From="Package\Load SCD attributes 1,2,6"
+      DTS:ObjectName="Constraint 7"
       DTS:To="Package\AuditUpdateRow Completed" />
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[prod server]"
       DTS:CreationName=""
-      DTS:DTSID="{665D875A-D987-4DF1-9B92-82EEB9EAA279}"
+      DTS:DTSID="{ADADEE0C-2928-4F71-A440-CDE8C2E134CD}"
       DTS:EvalOp="3"
       DTS:Expression="@[$Project::ServerName]==&quot;prodserver&quot;"
-      DTS:From="Package\Type1_and_3_SCD_changes"
+      DTS:From="Package\Load SCD attributes 1,2,6"
       DTS:LogicalAnd="True"
       DTS:ObjectName="prod server"
       DTS:To="Package\Drop stage table" />
     <DTS:PrecedenceConstraint
-      DTS:refId="Package.PrecedenceConstraints[Reload SCD]"
+      DTS:refId="Package.PrecedenceConstraints[reload or initial test run]"
       DTS:CreationName=""
       DTS:DTSID="{1D221770-87FE-49F7-9524-A0E431BC6C92}"
       DTS:EvalOp="3"
-      DTS:Expression="@[$Project::Reload]"
-      DTS:From="Package\load stage"
+      DTS:Expression="@[$Project::Reload] || @[$Package::TestSCDProcess]"
+      DTS:From="Package\Load Stage"
       DTS:LogicalAnd="True"
-      DTS:ObjectName="Reload SCD"
+      DTS:ObjectName="reload or initial test run"
       DTS:To="Package\Drop and recreate SCD table" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[typical incremental run]"
+      DTS:CreationName=""
+      DTS:DTSID="{DF0754A4-D16B-4EB9-A913-43EFF1840802}"
+      DTS:EvalOp="3"
+      DTS:Expression="!@[$Project::Reload] &amp;&amp; !@[$Package::TestSCDProcess]"
+      DTS:From="Package\Load Stage"
+      DTS:ObjectName="typical incremental run"
+      DTS:To="Package\Load SCD attributes 1,2,6" />
   </DTS:PrecedenceConstraints>
   <DTS:EventHandlers>
     <DTS:EventHandler
@@ -2284,82 +2333,88 @@ Where pers.PersonType != 'EM'</property>
         <NodeLayout
           Size="241.142857142858,42.2857142857143"
           Id="Package\AuditCreateRow"
-          TopLeft="203.333329630119,88.0454496553494" />
+          TopLeft="101.111109269622,56.0454496553494" />
         <NodeLayout
-          Size="221.714285714286,42.2857142857143"
+          Size="241.142857142858,42.2857142857143"
           Id="Package\AuditUpdateRow Completed"
-          TopLeft="181.333329630119,583.67248534474" />
+          TopLeft="101.111109269622,573.627031357217" />
         <NodeLayout
           Size="241.142857142858,42.2857142857143"
           Id="Package\Check existence of stage schema"
-          TopLeft="203.333329630119,130.331163941064" />
+          TopLeft="101.111109269622,98.331163941064" />
         <NodeLayout
           Size="218.857142857143,42.2857142857143"
           Id="Package\Drop and recreate SCD table"
-          TopLeft="443.88888080455,325.999982671305" />
+          TopLeft="410.555548078301,398.999981949276" />
         <NodeLayout
           Size="213.142857142858,42.2857142857143"
           Id="Package\Drop stage table"
-          TopLeft="443.333329630119,506.795862000936" />
+          TopLeft="230.555555909688,480.204954386904" />
         <NodeLayout
           Size="241.142857142858,42.2857142857143"
-          Id="Package\load stage"
-          TopLeft="203.333329630119,214.902592512492" />
+          Id="Package\Load SCD attributes 1,2,6"
+          TopLeft="101.111109269622,402.409068559013" />
+        <NodeLayout
+          Size="241.142857142858,42.2857142857143"
+          Id="Package\Load Stage"
+          TopLeft="294.888886905747,236.44804686103" />
         <NodeLayout
           Size="241.142857142858,42.2857142857143"
           Id="Package\Recreate stage table"
-          TopLeft="203.333329630119,172.616878226778" />
+          TopLeft="294.888886905747,194.162332575316" />
         <NodeLayout
           Size="221.714285714286,42.2857142857143"
           Id="Package\Type1_and_3_SCD_changes"
-          TopLeft="181.333329630119,431.101056773311" />
+          TopLeft="1165.2222005999,75.3738038033762" />
         <NodeLayout
           Size="221.714285714286,42.2857142857143"
           Id="Package\Type2 SCD changes"
-          TopLeft="181.333329630119,388.815342487597" />
+          TopLeft="1165.2222005999,33.0880895176621" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
-          TopLeft="203.333329630119,157.188306798207">
+          TopLeft="260.539680698193,140.616878226778">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,30.8571428571425"
+              EndConnector="154.920634778982,53.5454543485377"
               Start="0,0"
-              End="-7.5,30.8571428571425">
+              End="154.920634778982,46.0454543485377">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="-18.5,0" />
+                    End="0,17.6299434232794" />
                   <mssgle:CubicBezierSegment
-                    Point1="-18.5,0"
-                    Point2="-22.5,0"
-                    Point3="-22.5,4" />
+                    Point1="0,17.6299434232794"
+                    Point2="0,21.6299434232794"
+                    Point3="4,21.6299434232794" />
                   <mssgle:LineSegment
-                    End="-22.5,26.8571428571425" />
+                    End="150.920634778982,21.6299434232794" />
                   <mssgle:CubicBezierSegment
-                    Point1="-22.5,26.8571428571425"
-                    Point2="-22.5,30.8571428571425"
-                    Point3="-18.5,30.8571428571425" />
+                    Point1="150.920634778982,21.6299434232794"
+                    Point2="154.920634778982,21.6299434232794"
+                    Point3="154.920634778982,25.6299434232794" />
                   <mssgle:LineSegment
-                    End="-7.5,30.8571428571425" />
+                    End="154.920634778982,46.0454543485377" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="14.568676764491,26.6299434232794,125.78328125,16"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 1]"
-          TopLeft="203.333329630119,109.188306798207">
+          TopLeft="101.111109269622,77.1883067982065">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,36.5714285714289"
+              EndConnector="0,42.2857142857146"
               Start="0,0"
-              End="-7.5,36.5714285714289">
+              End="-7.5,42.2857142857146">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
@@ -2370,13 +2425,13 @@ Where pers.PersonType != 'EM'</property>
                     Point2="-22.5,0"
                     Point3="-22.5,4" />
                   <mssgle:LineSegment
-                    End="-22.5,32.5714285714289" />
+                    End="-22.5,38.2857142857146" />
                   <mssgle:CubicBezierSegment
-                    Point1="-22.5,32.5714285714289"
-                    Point2="-22.5,36.5714285714289"
-                    Point3="-18.5,36.5714285714289" />
+                    Point1="-22.5,38.2857142857146"
+                    Point2="-22.5,42.2857142857146"
+                    Point3="-18.5,42.2857142857146" />
                   <mssgle:LineSegment
-                    End="-7.5,36.5714285714289" />
+                    End="-7.5,42.2857142857146" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -2387,13 +2442,13 @@ Where pers.PersonType != 'EM'</property>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 2]"
-          TopLeft="203.333329630119,199.474021083921">
+          TopLeft="294.888886905747,215.305189718173">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="5.6843418860808E-14,36.5714285714283"
+              EndConnector="0,42.285714285714"
               Start="0,0"
-              End="-7.49999999999994,36.5714285714283">
+              End="-7.5,42.285714285714">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
@@ -2404,13 +2459,13 @@ Where pers.PersonType != 'EM'</property>
                     Point2="-22.5,0"
                     Point3="-22.5,4" />
                   <mssgle:LineSegment
-                    End="-22.5,32.5714285714283" />
+                    End="-22.5,38.285714285714" />
                   <mssgle:CubicBezierSegment
-                    Point1="-22.5,32.5714285714283"
-                    Point2="-22.5,36.5714285714283"
-                    Point3="-18.5,36.5714285714283" />
+                    Point1="-22.5,38.285714285714"
+                    Point2="-22.5,42.285714285714"
+                    Point3="-18.5,42.285714285714" />
                   <mssgle:LineSegment
-                    End="-7.49999999999994,36.5714285714283" />
+                    End="-7.5,42.285714285714" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -2420,31 +2475,43 @@ Where pers.PersonType != 'EM'</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 4]"
-          TopLeft="443.88888080455,347.142839814162">
+          Id="Package.PrecedenceConstraints[Constraint 3]"
+          TopLeft="176.899469165908,140.616878226778">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-40.8412654601452,62.815359816292"
+              EndConnector="0,261.792190332235"
               Start="0,0"
-              End="-33.3412654601452,62.815359816292">
+              End="0,254.292190332235">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="-16.4206327300726,0" />
-                  <mssgle:CubicBezierSegment
-                    Point1="-16.4206327300726,0"
-                    Point2="-20.4206327300726,0"
-                    Point3="-20.4206327300726,4" />
+                    End="0,254.292190332235" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-39.54462890625,119.146095166117,79.0892578125,16"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 4]"
+          TopLeft="410.555548078301,421.847382397002">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-68.3015816658216,0"
+              Start="0,0"
+              End="-60.8015816658216,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
                   <mssgle:LineSegment
-                    End="-20.4206327300726,58.815359816292" />
-                  <mssgle:CubicBezierSegment
-                    Point1="-20.4206327300726,58.815359816292"
-                    Point2="-20.4206327300726,62.815359816292"
-                    Point3="-24.4206327300726,62.815359816292" />
-                  <mssgle:LineSegment
-                    End="-33.3412654601452,62.815359816292" />
+                    End="-60.8015816658216,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -2455,7 +2522,7 @@ Where pers.PersonType != 'EM'</property>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 5]"
-          TopLeft="181.333329630119,409.958199630454">
+          TopLeft="1165.2222005999,54.2309466605191">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
@@ -2489,30 +2556,30 @@ Where pers.PersonType != 'EM'</property>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 6]"
-          TopLeft="549.904758201548,549.08157628665">
+          TopLeft="337.126984481117,522.490668672618">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-222.095238095238,34.5909090580896"
+              EndConnector="-76.5873037829231,51.1363626845987"
               Start="0,0"
-              End="-222.095238095238,27.0909090580896">
+              End="-76.5873037829231,43.6363626845987">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,16.6058434716562" />
+                    End="0,26.4795834080518" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,16.6058434716562"
-                    Point2="0,20.6058434716562"
-                    Point3="-4,20.6058434716562" />
+                    Point1="0,26.4795834080518"
+                    Point2="0,30.4795834080518"
+                    Point3="-4,30.4795834080518" />
                   <mssgle:LineSegment
-                    End="-218.095238095238,20.6058434716562" />
+                    End="-72.5873037829231,30.4795834080518" />
                   <mssgle:CubicBezierSegment
-                    Point1="-218.095238095238,20.6058434716562"
-                    Point2="-222.095238095238,20.6058434716562"
-                    Point3="-222.095238095238,24.6058434716562" />
+                    Point1="-72.5873037829231,30.4795834080518"
+                    Point2="-76.5873037829231,30.4795834080518"
+                    Point3="-76.5873037829231,34.4795834080518" />
                   <mssgle:LineSegment
-                    End="-222.095238095238,27.0909090580896" />
+                    End="-76.5873037829231,43.6363626845987" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -2522,130 +2589,142 @@ Where pers.PersonType != 'EM'</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package.PrecedenceConstraints[Incremental SCD load]"
-          TopLeft="288.619043915833,257.188306798206">
+          Id="Package.PrecedenceConstraints[Constraint 7]"
+          TopLeft="182.825394983908,444.694782844727">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,131.627035689391"
+              EndConnector="0,128.93224851249"
               Start="0,0"
-              End="0,124.127035689391">
+              End="0,121.43224851249">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,124.127035689391" />
+                    End="0,121.43224851249" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="-57.176640625,54.0635178446954,114.35328125,16"
-              RelativePosition="Any" />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package.PrecedenceConstraints[non prod server]"
-          TopLeft="256.571424868214,473.386771059025">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,110.285714285715"
-              Start="0,0"
-              End="0,102.785714285715">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,102.785714285715" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="-44.52734375,43.3928571428574,89.0546875,16"
+              BoundingBox="-44.52734375,52.7161242562449,89.0546875,16"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[prod server]"
-          TopLeft="327.809520106309,473.386771059025">
+          TopLeft="260.539680698193,444.694782844727">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="222.095238095238,33.409090941911"
+              EndConnector="76.5873037829231,35.5101715421767"
               Start="0,0"
-              End="222.095238095238,25.909090941911">
+              End="76.5873037829231,28.0101715421767">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,9.50725785266615" />
+                    End="0,10.3445043235347" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,9.50725785266615"
-                    Point2="0,13.5072578526662"
-                    Point3="4,13.5072578526662" />
+                    Point1="0,10.3445043235347"
+                    Point2="0,14.3445043235347"
+                    Point3="4,14.3445043235347" />
                   <mssgle:LineSegment
-                    End="218.095238095238,13.5072578526662" />
+                    End="72.5873037829231,14.3445043235347" />
                   <mssgle:CubicBezierSegment
-                    Point1="218.095238095238,13.5072578526662"
-                    Point2="222.095238095238,13.5072578526662"
-                    Point3="222.095238095238,17.5072578526662" />
+                    Point1="72.5873037829231,14.3445043235347"
+                    Point2="76.5873037829231,14.3445043235347"
+                    Point3="76.5873037829231,18.3445043235347" />
                   <mssgle:LineSegment
-                    End="222.095238095238,25.909090941911" />
+                    End="76.5873037829231,28.0101715421767" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="76.380275297619,18.5072578526662,69.3346875,16"
+              BoundingBox="3.62630814146156,19.3445043235347,69.3346875,16"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package.PrecedenceConstraints[Reload SCD]"
-          TopLeft="362.76190105869,257.188306798206">
+          Id="Package.PrecedenceConstraints[reload or initial test run]"
+          TopLeft="454.317458334318,278.733761146744">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="190.555551174431,68.8116758730987"
+              EndConnector="65.6666611725543,120.266220802532"
               Start="0,0"
-              End="190.555551174431,61.3116758730987">
+              End="65.6666611725543,112.766220802532">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,23.7968069204891" />
+                    End="0,44.5821174428308" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,23.7968069204891"
-                    Point2="0,27.7968069204891"
-                    Point3="4,27.7968069204891" />
+                    Point1="0,44.5821174428308"
+                    Point2="0,48.5821174428308"
+                    Point3="4,48.5821174428308" />
                   <mssgle:LineSegment
-                    End="186.555551174431,27.7968069204891" />
+                    End="61.6666611725543,48.5821174428308" />
                   <mssgle:CubicBezierSegment
-                    Point1="186.555551174431,27.7968069204891"
-                    Point2="190.555551174431,27.7968069204891"
-                    Point3="190.555551174431,31.7968069204891" />
+                    Point1="61.6666611725543,48.5821174428308"
+                    Point2="65.6666611725543,48.5821174428308"
+                    Point3="65.6666611725543,52.5821174428308" />
                   <mssgle:LineSegment
-                    End="190.555551174431,61.3116758730987" />
+                    End="65.6666611725543,112.766220802532" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="60.2029123059655,32.796806920489,70.1497265625,16"
+              BoundingBox="-28.0522553512228,53.5821174428308,121.771171875,16"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[typical incremental run]"
+          TopLeft="376.603172620033,278.733761146744">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-116.063491921839,123.675307412269"
+              Start="0,0"
+              End="-116.063491921839,116.175307412269">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,57.8376537061343" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,57.8376537061343"
+                    Point2="0,61.8376537061343"
+                    Point3="-4,61.8376537061343" />
+                  <mssgle:LineSegment
+                    End="-112.063491921839,61.8376537061343" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-112.063491921839,61.8376537061343"
+                    Point2="-116.063491921839,61.8376537061343"
+                    Point3="-116.063491921839,65.8376537061343" />
+                  <mssgle:LineSegment
+                    End="-116.063491921839,116.175307412269" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-117.60233189842,66.8376537061343,119.141171875,16"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <AnnotationLayout
-          Text="Template for loading SCD 1,2,3,6 using AdventureWorks2022 in SQL Server 2022&#xD;&#xA;Microsoft Visual Studio Community 2022&#xD;&#xA;Version 17.10.2&#xD;&#xA;VisualStudio.17.Release/17.10.2+35004.147&#xD;&#xA;Microsoft .NET Framework&#xD;&#xA;Version 4.8.09032&#xD;&#xA;Installed Version: Community&#xD;&#xA;&#xD;&#xA;SQL Server Data Tools   17.10.172.0&#xD;&#xA;Microsoft SQL Server Data Tools&#xD;&#xA;&#xD;&#xA;SQL Server Integration Services   16.0.5556.0&#xD;&#xA;Microsoft SQL Server Integration Services Designer&#xD;&#xA;Version 16.0.5556.0&#xD;&#xA;&#xD;&#xA;Uses batch processes instead of row by row used in MS SCD wizard"
+          Text="Template for loading SCD 1,2,6 attributes using AdventureWorks2022 in SQL Server 2022&#xA;Microsoft Visual Studio Community 2022&#xA;Version 17.10.2&#xA;VisualStudio.17.Release/17.10.2+35004.147&#xA;Microsoft .NET Framework&#xA;Version 4.8.09032&#xA;Installed Version: Community&#xA;&#xA;SQL Server Data Tools   17.10.172.0&#xA;Microsoft SQL Server Data Tools&#xA;&#xA;SQL Server Integration Services   16.0.5556.0&#xA;Microsoft SQL Server Integration Services Designer&#xA;Version 16.0.5556.0&#xA;&#xA;Uses batch processes instead of row by row used in MS SCD wizard"
           ParentId="Package"
           FontInfo="{assembly:Null}"
-          Size="453.142857142858,279.428571428572"
+          Size="497.714285714286,279.428571428572"
           Id="005d9d47-9b22-4e3f-a48a-65310ea5e6d5"
           TopLeft="798.333318793664,137.681810534875" />
       </GraphLayout>
@@ -2659,49 +2738,49 @@ Where pers.PersonType != 'EM'</property>
         <NodeLayout
           Size="188,42.2857142857143"
           Id="Package.EventHandlers[OnError]\AuditUpdateRow Error"
-          TopLeft="182.222218903495,112.272721037023" />
+          TopLeft="NaN,NaN" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
   <TaskHost
-    design-time-name="Package\load stage">
+    design-time-name="Package\Load Stage">
     <LayoutInfo>
       <GraphLayout
         Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="176.571428571429,42.2857142857143"
-          Id="Package\load stage\OLE DB Destination 1"
+          Id="Package\Load Stage\OLE DB Destination 1"
           TopLeft="51.1111101802484,251.136349688077" />
         <NodeLayout
           Size="176.571428571429,42.2857142857143"
-          Id="Package\load stage\OLE DB Destination 2"
+          Id="Package\Load Stage\OLE DB Destination 2"
           TopLeft="94.9999982698098,404.240242969496" />
         <NodeLayout
           Size="176.571428571429,42.2857142857143"
-          Id="Package\load stage\OLE DB Destination 3"
+          Id="Package\Load Stage\OLE DB Destination 3"
           TopLeft="419.999992350738,451.571414852879" />
         <NodeLayout
           Size="176.571428571429,42.2857142857143"
-          Id="Package\load stage\OLE DB Destination 4"
+          Id="Package\Load Stage\OLE DB Destination 4"
           TopLeft="733.888875522916,401.402592151478" />
         <NodeLayout
           Size="176.571428571429,42.2857142857143"
-          Id="Package\load stage\OLE DB Destination 5"
+          Id="Package\Load Stage\OLE DB Destination 5"
           TopLeft="792.222207793853,256.097411097652" />
         <NodeLayout
           Size="150.285714285715,42.2857142857143"
-          Id="Package\load stage\OLE DB Source"
+          Id="Package\Load Stage\OLE DB Source"
           TopLeft="441.111122796565,50.3043491297273" />
         <NodeLayout
           Size="133.142857142858,42.2857142857143"
-          Id="Package\load stage\Row Count"
+          Id="Package\Load Stage\Row Count"
           TopLeft="448.33332516805,153.045446045205" />
         <NodeLayout
           Size="97.7142857142858,42.2857142857143"
-          Id="Package\load stage\bdd"
+          Id="Package\Load Stage\bdd"
           TopLeft="461.666658258549,257.045440268973" />
         <EdgeLayout
-          Id="Package\load stage.Paths[Balanced Data Distributor Output 3]"
+          Id="Package\Load Stage.Paths[Balanced Data Distributor Output 3]"
           TopLeft="509.404753876072,299.331154554687">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -2725,7 +2804,7 @@ Where pers.PersonType != 'EM'</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\load stage.Paths[Balanced Data Distributor Output 2]"
+          Id="Package\Load Stage.Paths[Balanced Data Distributor Output 2]"
           TopLeft="488.095229687121,299.331154554687">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -2761,7 +2840,7 @@ Where pers.PersonType != 'EM'</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\load stage.Paths[Balanced Data Distributor Output 1]"
+          Id="Package\Load Stage.Paths[Balanced Data Distributor Output 1]"
           TopLeft="461.666658258549,275.233752121382">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -2785,7 +2864,7 @@ Where pers.PersonType != 'EM'</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\load stage.Paths[Row Count Output 1]"
+          Id="Package\Load Stage.Paths[Row Count Output 1]"
           TopLeft="512.714277427585,195.331160330919">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -2803,11 +2882,13 @@ Where pers.PersonType != 'EM'</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\load stage.Paths[OLE DB Source Output]"
+          Id="Package\Load Stage.Paths[OLE DB Source Output]"
           TopLeft="515.57936683945,92.5900634154416">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -2825,11 +2906,13 @@ Where pers.PersonType != 'EM'</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\load stage.Paths[Balanced Data Distributor Output 5]"
+          Id="Package\Load Stage.Paths[Balanced Data Distributor Output 5]"
           TopLeft="559.380943972835,277.71428282617">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -2853,7 +2936,7 @@ Where pers.PersonType != 'EM'</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\load stage.Paths[Balanced Data Distributor Output 4]"
+          Id="Package\Load Stage.Paths[Balanced Data Distributor Output 4]"
           TopLeft="532.952372544264,299.331154554687">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -2890,16 +2973,16 @@ Where pers.PersonType != 'EM'</property>
         </EdgeLayout>
         <AnnotationLayout
           Text="Writes rows to AdventureWorksDWExtend.dbo.DimCustomer"
-          ParentId="Package\load stage"
+          ParentId="Package\Load Stage"
           FontInfo="{assembly:Null}"
-          Size="350.857142857143,60"
+          Size="350.857142857143,NaN"
           Id="d7757528-c6e9-4242-b564-ddec71b9d490"
           TopLeft="859.444428791788,111.681811978933" />
       </GraphLayout>
     </LayoutInfo>
   </TaskHost>
   <PipelineComponentMetadata
-    design-time-name="Package\load stage\OLE DB Destination 1">
+    design-time-name="Package\Load Stage\OLE DB Destination 1">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
@@ -2912,7 +2995,7 @@ Where pers.PersonType != 'EM'</property>
     </Properties>
   </PipelineComponentMetadata>
   <PipelineComponentMetadata
-    design-time-name="Package\load stage\OLE DB Destination 2">
+    design-time-name="Package\Load Stage\OLE DB Destination 2">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
@@ -2925,7 +3008,7 @@ Where pers.PersonType != 'EM'</property>
     </Properties>
   </PipelineComponentMetadata>
   <PipelineComponentMetadata
-    design-time-name="Package\load stage\OLE DB Destination 3">
+    design-time-name="Package\Load Stage\OLE DB Destination 3">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
@@ -2938,7 +3021,7 @@ Where pers.PersonType != 'EM'</property>
     </Properties>
   </PipelineComponentMetadata>
   <PipelineComponentMetadata
-    design-time-name="Package\load stage\OLE DB Destination 4">
+    design-time-name="Package\Load Stage\OLE DB Destination 4">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
@@ -2951,7 +3034,7 @@ Where pers.PersonType != 'EM'</property>
     </Properties>
   </PipelineComponentMetadata>
   <PipelineComponentMetadata
-    design-time-name="Package\load stage\OLE DB Destination 5">
+    design-time-name="Package\Load Stage\OLE DB Destination 5">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
@@ -2964,7 +3047,7 @@ Where pers.PersonType != 'EM'</property>
     </Properties>
   </PipelineComponentMetadata>
   <PipelineComponentMetadata
-    design-time-name="Package\load stage\OLE DB Source">
+    design-time-name="Package\Load Stage\OLE DB Source">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
@@ -2972,19 +3055,27 @@ Where pers.PersonType != 'EM'</property>
     </Properties>
   </PipelineComponentMetadata>
   <PrecedenceConstraint
-    design-time-name="Package.PrecedenceConstraints[Incremental SCD load]">
-    <ShowAnnotation>ConstraintName</ShowAnnotation>
+    design-time-name="Package.PrecedenceConstraints[Constraint]">
+    <ShowAnnotation>ConstraintDescription</ShowAnnotation>
   </PrecedenceConstraint>
   <PrecedenceConstraint
-    design-time-name="Package.PrecedenceConstraints[non prod server]">
-    <ShowAnnotation>ConstraintName</ShowAnnotation>
+    design-time-name="Package.PrecedenceConstraints[Constraint 3]">
+    <ShowAnnotation>ConstraintDescription</ShowAnnotation>
+  </PrecedenceConstraint>
+  <PrecedenceConstraint
+    design-time-name="Package.PrecedenceConstraints[Constraint 7]">
+    <ShowAnnotation>ConstraintDescription</ShowAnnotation>
   </PrecedenceConstraint>
   <PrecedenceConstraint
     design-time-name="Package.PrecedenceConstraints[prod server]">
     <ShowAnnotation>ConstraintName</ShowAnnotation>
   </PrecedenceConstraint>
   <PrecedenceConstraint
-    design-time-name="Package.PrecedenceConstraints[Reload SCD]">
+    design-time-name="Package.PrecedenceConstraints[reload or initial test run]">
+    <ShowAnnotation>ConstraintName</ShowAnnotation>
+  </PrecedenceConstraint>
+  <PrecedenceConstraint
+    design-time-name="Package.PrecedenceConstraints[typical incremental run]">
     <ShowAnnotation>ConstraintName</ShowAnnotation>
   </PrecedenceConstraint>
 </Objects>]]></DTS:DesignTimeProperties>
