@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="LoadSCD126example"
   DTS:PackageType="5"
-  DTS:VersionBuild="360"
-  DTS:VersionGUID="{0263566B-59F0-460A-AFBF-108DD661BE49}">
+  DTS:VersionBuild="361"
+  DTS:VersionGUID="{C7B95568-B867-4A46-9699-8537774EA6DE}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -2721,12 +2721,12 @@ Where pers.PersonType != 'EM'</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <AnnotationLayout
-          Text="Template for loading SCD 1,2,6 attributes using AdventureWorks2022 in SQL Server 2022&#xA;Microsoft Visual Studio Community 2022&#xA;Version 17.10.2&#xA;VisualStudio.17.Release/17.10.2+35004.147&#xA;Microsoft .NET Framework&#xA;Version 4.8.09032&#xA;Installed Version: Community&#xA;&#xA;SQL Server Data Tools   17.10.172.0&#xA;Microsoft SQL Server Data Tools&#xA;&#xA;SQL Server Integration Services   16.0.5556.0&#xA;Microsoft SQL Server Integration Services Designer&#xA;Version 16.0.5556.0&#xA;&#xA;Uses batch processes instead of row by row used in MS SCD wizard"
+          Text="SSIS example for loading SCD 1,2,6 attributes using AdventureWorks2022 in SQL Server 2022 and&#xD;&#xA;&#xD;&#xA;Microsoft Visual Studio Professional 2022 (2) Version 17.10.3 VisualStudio.17.Release/17.10.3+35013.160 Microsoft .NET Framework Version 4.8.09032&#xD;&#xA;&#xD;&#xA;Installed Version: Professional&#xD;&#xA;&#xD;&#xA;SQL Server Data Tools 17.10.172.0 Microsoft SQL Server Data Tools&#xD;&#xA;&#xD;&#xA;SQL Server Integration Services 16.0.5556.0 Microsoft SQL Server Integration Services Designer Version 16.0.5556.0&#xD;&#xA;&#xD;&#xA;Uses batch processes instead of row by row used in MS SCD wizard To use:&#xD;&#xA;&#xD;&#xA;Get AdventureWorks2022 here: https://learn.microsoft.com/en-us/sql/samples/adventureworks-install-configure?view=sql-server-ver16&amp;tabs=ssms&#xD;&#xA;Run CreateAdventureWorksDWExtended.sql to create db on local server&#xD;&#xA;Run the SetupDatabase.sql script in the solution make sure these two databases are present: AdventureWorksDWExtended and AdventureWorks2022&#xD;&#xA;Get the solution Datawarehouse.sln and open&#xD;&#xA;Run the setup script in the solution: SetupDatabase.sql&#xD;&#xA;Go through the test steps in the teststeps.sql and note the changes that occur in dbo.DimCustomer&#xA;&#xA;Uses batch processes instead of row by row used in MS SCD wizard"
           ParentId="Package"
           FontInfo="{assembly:Null}"
-          Size="497.714285714286,279.428571428572"
+          Size="817.714285714286,343.428571428572"
           Id="005d9d47-9b22-4e3f-a48a-65310ea5e6d5"
-          TopLeft="798.333318793664,137.681810534875" />
+          TopLeft="707.222209341917,158.363627568011" />
       </GraphLayout>
     </LayoutInfo>
   </Package>
