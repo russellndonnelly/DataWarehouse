@@ -8,7 +8,7 @@ SQL Server Data Tools 17.10.172.0 Microsoft SQL Server Data Tools
 
 SQL Server Integration Services 16.0.5556.0 Microsoft SQL Server Integration Services Designer Version 16.0.5556.0
 
-Uses batch processes instead of row by row used in MS SCD wizard To use:
+Uses batch processes instead of row by row used in MS SCD wizard, to run:
 
 1) Get AdventureWorks2022 here: https://learn.microsoft.com/en-us/sql/samples/adventureworks-install-configure?view=sql-server-ver16&tabs=ssms
 2) Run CreateAdventureWorksDWExtended.sql to create db on local server
@@ -16,5 +16,3 @@ Uses batch processes instead of row by row used in MS SCD wizard To use:
 4) Get the solution Datawarehouse.sln and open
 5) Run the setup script in the solution: SetupDatabase.sql
 6) Go through the test steps in the teststeps.sql and note the changes that occur in dbo.DimCustomer
-
-Uses batch processes instead of row by row used in MS SCD wizard
