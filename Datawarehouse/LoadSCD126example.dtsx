@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="LoadSCD126example"
   DTS:PackageType="5"
-  DTS:VersionBuild="363"
-  DTS:VersionGUID="{4E9C602B-8C0D-474F-9753-35ED16FDCE00}">
+  DTS:VersionBuild="368"
+  DTS:VersionGUID="{B2D2C166-AD8D-4A8F-A6C3-6D89F985709B}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -61,7 +61,7 @@
       DTS:ObjectName="TestSCDProcess">
       <DTS:Property
         DTS:DataType="11"
-        DTS:Name="ParameterValue">0</DTS:Property>
+        DTS:Name="ParameterValue">-1</DTS:Property>
     </DTS:PackageParameter>
   </DTS:PackageParameters>
   <DTS:Variables>
@@ -546,7 +546,7 @@
       DTS:LocaleID="-1"
       DTS:ObjectName="AuditUpdateRow Completed"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="3">
+      DTS:ThreadHint="2">
       <DTS:Variables />
       <DTS:LoggingOptions
         DTS:FilterKind="0" />
@@ -638,7 +638,7 @@
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{491675FB-4A47-43C8-88D3-C6890C9E484C}"
-          SQLTask:SqlStatementSource="/*********************************************************************************************&#xA;Purpose:&#x9;&#x9;inserts and updates for SCD attribute types: 1,2 and 6&#xA;Attribute&#x9;&#x9;SCD Type&#xA;[Title]&#x9;&#x9;&#x9;1&#xA;[FirstName]&#x9;&#x9;2&#xA;[MiddleName]&#x9;2&#xA;[LastName]&#x9;&#x9;2&#xA;[PhoneNumber]&#x9;6&#xA;[PhoneType]&#x9;&#x9;1&#xA;*********************************************************************************************/&#xA;USE AdventureWorksDWExtended&#xA;&#xA;/***********************************************************************&#xA;--run in ssis:&#xA;&#x9;Declare @PackageStartDate as datetime = ?&#xA;***********************************************************************/&#xA;/**********************************************************************/&#xA;--run in ssms:  &#xA;&#x9;Declare @PackageStartDate as datetime = getdate()&#xA;/**********************************************************************/&#xA;&#x9;Declare @CurrentExpirationDate as datetime = Convert(date,'12/31/9999')&#xA;&#xA;/*type 1 attribute change*********************************************************************/&#xA;&#x9;MERGE INTO AdventureWorksDWExtended.dbo.DimCustomer as tgt&#xA;&#x9;USING AdventureWorksDWExtended.stage.DimCustomer src &#xA;&#x9;&#x9;ON tgt.[BusinessEntityID_nk] = src.[BusinessEntityID_nk]&#xA;&#x9;WHEN MATCHED AND EXISTS&#x9; --business key exists and type1 or type3 attribute changes:&#xA;&#x9;(&#xA;&#x9;&#x9;&#x9;SELECT&#xA;&#x9;&#x9;&#x9;&#x9;src.Title&#x9;&#x9;&#x9;&#x9;--type1&#xA;&#x9;&#x9;&#x9;&#x9;,src.PhoneType&#x9;&#x9;&#x9;--type1&#xA;&#x9;&#x9;&#x9;EXCEPT&#xA;&#x9;&#x9;&#x9;SELECT&#xA;&#x9;&#x9;&#x9;&#x9;tgt.Title&#xA;&#x9;&#x9;&#x9;&#x9;,tgt.PhoneType&#xA;&#x9;)&#xA;&#x9;THEN UPDATE&#x9;SET &#xA;&#x9;&#x9;tgt.Title = src.Title&#xA;&#x9;&#x9;,tgt.PhoneType = src.PhoneType&#xA;&#x9;&#x9;,tgt.DateUpdated = @PackageStartDate;&#xA;&#xA;&#xA;/*attribute type 2 or type 6 changes need to be processed together since both could potentially occur on the same time adding new row**/&#xA;&#x9;Update tgt&#xA;&#x9;Set&#xA;&#x9;&#x9;tgt.IsCurrentRow = 0&#xA;&#x9;&#x9;,tgt.ExpirationDate = DateAdd(minute,-1,src.ModifiedDate)&#xA;&#x9;From dbo.DimCustomer as tgt&#xA;&#x9;Inner Join stage.DimCustomer as src&#xA;&#x9;&#x9;On tgt.BusinessEntityID_nk = src.BusinessEntityID_nk&#xA;&#x9;Where &#xA;&#x9;&#x9;tgt.ExpirationDate = @CurrentExpirationDate&#xA;&#x9;&#x9;And &#xA;&#x9;&#x9;(&#xA;&#x9;&#x9;&#x9;src.[PhoneNumber] != tgt.[PhoneNumber_curr]&#xA;&#x9;&#x9;&#x9;or&#xA;&#x9;&#x9;&#x9;src.[MiddleName] != tgt.[MiddleName]&#xA;&#x9;&#x9;)&#xA;&#x9;&#x9;And tgt.IsCurrentRow = 1;&#xA;&#xA;&#x9;Insert dbo.DimCustomer&#xA;&#x9;(&#xA;&#x9;&#x9;BusinessEntityID_nk&#xA;&#x9;&#x9;,Title&#xA;&#x9;&#x9;,FirstName&#xA;&#x9;&#x9;,MiddleName&#xA;&#x9;&#x9;,LastName&#xA;&#x9;&#x9;,PhoneNumber_curr&#xA;&#x9;&#x9;,PhoneNumber_prev&#xA;&#x9;&#x9;,PhoneType&#xA;&#x9;&#x9;,EffectiveDate&#xA;&#x9;&#x9;,ExpirationDate&#xA;&#x9;&#x9;,DateInserted&#xA;&#x9;&#x9;,DateUpdated&#xA;&#x9;&#x9;,IsCurrentRow&#xA;&#x9;)&#xA;&#x9;Select &#xA;&#x9;&#x9;tgt.BusinessEntityID_nk&#xA;&#x9;&#x9;,src.Title&#xA;&#x9;&#x9;,src.FirstName&#xA;&#x9;&#x9;,src.MiddleName&#xA;&#x9;&#x9;,src.LastName&#xA;&#x9;&#x9;,src.PhoneNumber as PhoneNumber_curr&#xA;&#x9;&#x9;,tgt.[PhoneNumber_curr] as 'PhoneNumber_prev'&#x9;&#xA;&#x9;&#x9;,src.PhoneType&#xA;&#x9;&#x9;,src.ModifiedDate as EffectiveDate&#xA;&#x9;&#x9;,@CurrentExpirationDate as 'ExpirationDate'&#xA;&#x9;&#x9;--,Convert(date,@CurrentExpirationDate) as 'ExpirationDate&#xA;&#x9;&#x9;,@PackageStartDate as 'DateInserted'&#xA;&#x9;&#x9;,@PackageStartDate as 'DateUpdated'&#xA;&#x9;&#x9;,Cast(1 as bit)&#x9; as 'IsCurrentRow'&#xA;&#x9;From dbo.DimCustomer as tgt&#xA;&#x9;Inner Join stage.DimCustomer as src&#xA;&#x9;&#x9;On tgt.BusinessEntityID_nk = src.BusinessEntityID_nk&#xA;&#x9;Where &#xA;&#x9;&#x9;(&#xA;&#x9;&#x9;&#x9;src.[PhoneNumber] != tgt.[PhoneNumber_curr]&#xA;&#x9;&#x9;&#x9;or&#xA;&#x9;&#x9;&#x9;src.[MiddleName] != tgt.[MiddleName]&#xA;&#x9;&#x9;)&#xA;&#x9;&#x9;And tgt.ExpirationDate = DateAdd(minute,-1,src.ModifiedDate);&#xA;&#xA;&#xA;&#x9;--Update tgt&#xA;&#x9;--&#x9;Set tgt.ExpirationDate = @CurrentExpirationDate&#xA;&#x9;--From AdventureWorksDWExtended.dbo.DimCustomer as tgt&#xA;&#x9;--Inner Join AdventureWorksDWExtended.stage.DimCustomer src &#xA;&#x9;--&#x9;ON tgt.[BusinessEntityID_nk] = src.[BusinessEntityID_nk]&#xA;&#x9;--Where &#xA;&#x9;--&#x9;tgt.IsCurrentRow = 1&#xA;&#x9;--&#x9;And tgt.DateUpdated = @PackageStartDate&#xA;&#xA;/***********new business/durable key row added in source**************************/&#xA;&#x9;MERGE INTO dbo.DimCustomer as tgt&#xA;&#x9;USING stage.DimCustomer as src &#xA;&#x9;&#x9;ON tgt.BusinessEntityID_nk = src.BusinessEntityID_nk&#xA;&#x9;WHEN NOT MATCHED BY TARGET THEN INSERT&#xA;&#x9;(&#xA;&#x9;&#x9;[BusinessEntityID_nk]&#xA;&#x9;&#x9;,[Title]&#xA;&#x9;&#x9;,[FirstName]&#xA;&#x9;&#x9;,[MiddleName]&#xA;&#x9;&#x9;,[LastName]&#xA;&#x9;&#x9;,[PhoneNumber_curr]&#xA;&#x9;&#x9;,[PhoneNumber_prev]&#xA;&#x9;&#x9;,[PhoneType]&#xA;&#x9;&#x9;,[EffectiveDate]&#xA;&#x9;&#x9;,[ExpirationDate]&#xA;&#x9;&#x9;,[DateInserted]&#xA;&#x9;&#x9;,[DateUpdated]&#xA;&#x9;&#x9;,[IsCurrentRow]&#xA;&#x9;)&#xA;&#x9;VALUES&#xA;&#x9;(&#xA;&#x9;&#x9;&#x9;src.[BusinessEntityID_nk]&#xA;&#x9;&#x9;,src.[Title]&#xA;&#x9;&#x9;,src.[FirstName]&#xA;&#x9;&#x9;,src.[MiddleName]&#xA;&#x9;&#x9;,src.[LastName]&#xA;&#x9;&#x9;,src.[PhoneNumber]&#xA;&#x9;&#x9;,'0000000000'&#x9;&#x9;&#x9;--default phone number&#xA;&#x9;&#x9;,src.[PhoneType]&#xA;&#x9;&#x9;,src.ModifiedDate&#xA;&#x9;&#x9;,@CurrentExpirationDate&#xA;&#x9;&#x9;,@PackageStartDate&#xA;&#x9;&#x9;,@PackageStartDate&#xA;&#x9;&#x9;,Cast(1 as bit)&#xA;&#x9;);&#xA;&#xA;&#xA;&#x9;SELECT [RowCount] = COUNT(*)&#xA;&#x9;FROM dbo.DimCustomer&#xA;&#x9;WHERE &#xA;&#x9;&#x9;DateInserted = @PackageStartDate &#xA;&#x9;&#x9;OR &#xA;&#x9;&#x9;DateUpdated = @PackageStartDate;"
+          SQLTask:SqlStatementSource="/*********************************************************************************************&#xA;Purpose:&#x9;&#x9;inserts and updates for SCD attribute types: 1,2 and 6&#xA;Attribute&#x9;&#x9;SCD Type&#xA;[Title]&#x9;&#x9;&#x9;1&#xA;[FirstName]&#x9;&#x9;2&#xA;[MiddleName]&#x9;2&#xA;[LastName]&#x9;&#x9;2&#xA;[PhoneNumber]&#x9;6&#xA;[PhoneType]&#x9;&#x9;1&#xA;*********************************************************************************************/&#xA;USE AdventureWorksDWExtended&#xA;&#xA;/***********************************************************************&#xA;--run in ssis:&#xA;&#x9;Declare @PackageStartDate as datetime = ?&#xA;***********************************************************************/&#xA;/**********************************************************************/&#xA;--run in ssms:  &#xA;&#x9;Declare @PackageStartDate as datetime = getdate()&#xA;/**********************************************************************/&#xA;&#x9;Declare @CurrentExpirationDate as datetime = Convert(date,'12/31/9999')&#xA;&#xA;/*type 1 attribute change*********************************************************************/&#xA;&#x9;MERGE INTO AdventureWorksDWExtended.dbo.DimCustomer as tgt&#xA;&#x9;USING AdventureWorksDWExtended.stage.DimCustomer src &#xA;&#x9;&#x9;ON tgt.[BusinessEntityID_nk] = src.[BusinessEntityID_nk]&#xA;&#x9;WHEN MATCHED AND EXISTS&#x9; --business key exists and type1 or type3 attribute changes:&#xA;&#x9;(&#xA;&#x9;&#x9;&#x9;SELECT&#xA;&#x9;&#x9;&#x9;&#x9;src.Title&#x9;&#x9;&#x9;&#x9;--type1&#xA;&#x9;&#x9;&#x9;&#x9;,src.PhoneType&#x9;&#x9;&#x9;--type1&#xA;&#x9;&#x9;&#x9;EXCEPT&#xA;&#x9;&#x9;&#x9;SELECT&#xA;&#x9;&#x9;&#x9;&#x9;tgt.Title&#xA;&#x9;&#x9;&#x9;&#x9;,tgt.PhoneType&#xA;&#x9;)&#xA;&#x9;THEN UPDATE&#x9;SET &#xA;&#x9;&#x9;tgt.Title = src.Title&#xA;&#x9;&#x9;,tgt.PhoneType = src.PhoneType&#xA;&#x9;&#x9;,tgt.DateUpdated = @PackageStartDate;&#xA;&#xA;&#xA;/*attribute type 2 or type 6 changes need to be processed together since both could potentially occur on the same time adding new row**/&#xA;&#x9;Insert Into dbo.DimCustomer&#xA;&#x9;(&#xA;&#x9;&#x9;BusinessEntityID_nk&#xA;&#x9;&#x9;,Title&#xA;&#x9;&#x9;,FirstName&#xA;&#x9;&#x9;,MiddleName&#xA;&#x9;&#x9;,LastName&#xA;&#x9;&#x9;,PhoneNumber_curr&#xA;&#x9;&#x9;,PhoneNumber_prev&#xA;&#x9;&#x9;,PhoneType&#xA;&#x9;&#x9;,EffectiveDate&#xA;&#x9;&#x9;,ExpirationDate&#xA;&#x9;&#x9;,DateInserted&#xA;&#x9;&#x9;,DateUpdated&#xA;&#x9;&#x9;,IsCurrentRow&#xA;&#x9;)&#xA;&#x9;Select&#xA;&#x9;&#x9;BusinessEntityID_nk&#xA;&#x9;&#x9;,Title&#xA;&#x9;&#x9;,FirstName&#xA;&#x9;&#x9;,MiddleName&#xA;&#x9;&#x9;,LastName&#xA;&#x9;&#x9;,PhoneNumber_curr&#xA;&#x9;&#x9;,PhoneNumber_prev&#xA;&#x9;&#x9;,PhoneType&#xA;&#x9;&#x9;,EffectiveDate&#xA;&#x9;&#x9;,ExpirationDate&#xA;&#x9;&#x9;,DateInserted&#xA;&#x9;&#x9;,DateUpdated&#xA;&#x9;&#x9;,IsCurrentRow&#xA;&#x9;From&#xA;&#x9;(&#xA;&#x9;&#x9;MERGE INTO dbo.DimCustomer as tgt&#xA;&#x9;&#x9;USING stage.DimCustomer as src &#xA;&#x9;&#x9;&#x9;ON tgt.BusinessEntityID_nk = src.BusinessEntityID_nk&#xA;&#x9;&#x9;WHEN MATCHED&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--these rows become newest history&#xA;&#x9;&#x9;&#x9;AND tgt.ExpirationDate = @CurrentExpirationDate &#xA;&#x9;&#x9;&#x9;AND tgt.IsCurrentRow = 1 &#xA;&#x9;&#x9;&#x9;AND EXISTS&#xA;&#x9;&#x9;&#x9;(&#xA;&#x9;&#x9;&#x9;&#x9;Select &#xA;&#x9;&#x9;&#x9;&#x9;&#x9;src.[PhoneNumber] as 'PhoneNumber_curr'&#x9;&#x9;&#x9;&#x9;--type 6 attribute&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;,src.[MiddleName]&#xA;&#x9;&#x9;&#x9;&#x9;Except&#xA;&#x9;&#x9;&#x9;&#x9;Select&#xA;&#x9;&#x9;&#x9;&#x9;&#x9; tgt.[PhoneNumber_curr]&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;,tgt.[MiddleName]&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--type 2 attribute&#xA;&#x9;&#x9;&#x9;)&#xA;&#x9;&#x9;THEN UPDATE SET&#xA;&#x9;&#x9;&#x9;tgt.IsCurrentRow = 0&#xA;&#x9;&#x9;&#x9;,tgt.ExpirationDate = DateAdd(minute,-1,src.ModifiedDate)&#xA;&#x9;&#x9;OUTPUT $Action ActionOut,&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;--new current row&#xA;&#x9;&#x9;&#x9;src.BusinessEntityID_nk&#xA;&#x9;&#x9;&#x9;,src.Title&#xA;&#x9;&#x9;&#x9;,src.FirstName&#xA;&#x9;&#x9;&#x9;,src.MiddleName&#xA;&#x9;&#x9;&#x9;,src.LastName&#xA;&#x9;&#x9;&#x9;,src.PhoneNumber as 'PhoneNumber_curr'&#xA;&#x9;&#x9;&#x9;,INSERTED.PhoneNumber_curr as 'PhoneNumber_prev'&#x9;&#x9;&#x9;--there is no UPDATED table of rows, rows are deleted and reinserted so INSERTED works here&#xA;&#x9;&#x9;&#x9;,src.PhoneType&#xA;&#x9;&#x9;&#x9;,src.ModifiedDate as 'EffectiveDate'&#xA;&#x9;&#x9;&#x9;,@CurrentExpirationDate as 'ExpirationDate'&#xA;&#x9;&#x9;&#x9;--,Convert(date,@CurrentExpirationDate) as 'ExpirationDate&#xA;&#x9;&#x9;&#x9;,@PackageStartDate as 'DateInserted'&#xA;&#x9;&#x9;&#x9;,@PackageStartDate as 'DateUpdated'&#xA;&#x9;&#x9;&#x9;,Cast(1 as bit)&#x9; as 'IsCurrentRow'&#xA;&#x9;) as MergeOut&#xA;&#x9;WHERE MergeOut.ActionOut = 'UPDATE';&#xA;&#xA;/***********new business/durable key row added in source**************************/&#xA;&#x9;MERGE INTO dbo.DimCustomer as tgt&#xA;&#x9;USING stage.DimCustomer as src &#xA;&#x9;&#x9;ON tgt.BusinessEntityID_nk = src.BusinessEntityID_nk&#xA;&#x9;WHEN NOT MATCHED BY TARGET THEN INSERT&#xA;&#x9;(&#xA;&#x9;&#x9;[BusinessEntityID_nk]&#xA;&#x9;&#x9;,[Title]&#xA;&#x9;&#x9;,[FirstName]&#xA;&#x9;&#x9;,[MiddleName]&#xA;&#x9;&#x9;,[LastName]&#xA;&#x9;&#x9;,[PhoneNumber_curr]&#xA;&#x9;&#x9;,[PhoneNumber_prev]&#xA;&#x9;&#x9;,[PhoneType]&#xA;&#x9;&#x9;,[EffectiveDate]&#xA;&#x9;&#x9;,[ExpirationDate]&#xA;&#x9;&#x9;,[DateInserted]&#xA;&#x9;&#x9;,[DateUpdated]&#xA;&#x9;&#x9;,[IsCurrentRow]&#xA;&#x9;)&#xA;&#x9;VALUES&#xA;&#x9;(&#xA;&#x9;&#x9;&#x9;src.[BusinessEntityID_nk]&#xA;&#x9;&#x9;,src.[Title]&#xA;&#x9;&#x9;,src.[FirstName]&#xA;&#x9;&#x9;,src.[MiddleName]&#xA;&#x9;&#x9;,src.[LastName]&#xA;&#x9;&#x9;,src.[PhoneNumber]&#xA;&#x9;&#x9;,'0000000000'&#x9;&#x9;&#x9;--default phone number&#xA;&#x9;&#x9;,src.[PhoneType]&#xA;&#x9;&#x9;,src.ModifiedDate&#xA;&#x9;&#x9;,@CurrentExpirationDate&#xA;&#x9;&#x9;,@PackageStartDate&#xA;&#x9;&#x9;,@PackageStartDate&#xA;&#x9;&#x9;,Cast(1 as bit)&#xA;&#x9;);&#xA;&#xA;&#xA;&#x9;SELECT [RowCount] = COUNT(*)&#xA;&#x9;FROM dbo.DimCustomer&#xA;&#x9;WHERE &#xA;&#x9;&#x9;DateInserted = @PackageStartDate &#xA;&#x9;&#x9;OR &#xA;&#x9;&#x9;DateUpdated = @PackageStartDate;"
           SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ResultBinding
             SQLTask:ResultName="RowCount"
@@ -2120,7 +2120,7 @@ Where pers.PersonType != 'EM'</property>
       DTS:LocaleID="-1"
       DTS:ObjectName="Type1_and_3_SCD_changes"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="3">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -2149,7 +2149,7 @@ Where pers.PersonType != 'EM'</property>
       DTS:LocaleID="-1"
       DTS:ObjectName="Type2 SCD changes"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="3">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -2349,7 +2349,7 @@ Where pers.PersonType != 'EM'</property>
         <NodeLayout
           Size="213.142857142858,42.2857142857143"
           Id="Package\Drop stage table"
-          TopLeft="230.555555909688,480.204954386904" />
+          TopLeft="230.555555909688,488.204954386904" />
         <NodeLayout
           Size="241.142857142858,42.2857142857143"
           Id="Package\Load SCD attributes 1,2,6"
@@ -2556,30 +2556,30 @@ Where pers.PersonType != 'EM'</property>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 6]"
-          TopLeft="337.126984481117,522.490668672618">
+          TopLeft="337.126984481117,530.490668672618">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-76.5873037829231,51.1363626845987"
+              EndConnector="-76.5873037829231,43.1363626845987"
               Start="0,0"
-              End="-76.5873037829231,43.6363626845987">
+              End="-76.5873037829231,35.6363626845987">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,26.4795834080518" />
+                    End="0,21.7112218261308" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,26.4795834080518"
-                    Point2="0,30.4795834080518"
-                    Point3="-4,30.4795834080518" />
+                    Point1="0,21.7112218261308"
+                    Point2="0,25.7112218261308"
+                    Point3="-4,25.7112218261308" />
                   <mssgle:LineSegment
-                    End="-72.5873037829231,30.4795834080518" />
+                    End="-72.5873037829231,25.7112218261308" />
                   <mssgle:CubicBezierSegment
-                    Point1="-72.5873037829231,30.4795834080518"
-                    Point2="-76.5873037829231,30.4795834080518"
-                    Point3="-76.5873037829231,34.4795834080518" />
+                    Point1="-72.5873037829231,25.7112218261308"
+                    Point2="-76.5873037829231,25.7112218261308"
+                    Point3="-76.5873037829231,29.7112218261308" />
                   <mssgle:LineSegment
-                    End="-76.5873037829231,43.6363626845987" />
+                    End="-76.5873037829231,35.6363626845987" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -2618,33 +2618,33 @@ Where pers.PersonType != 'EM'</property>
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="76.5873037829231,35.5101715421767"
+              EndConnector="76.5873037829231,43.5101715421767"
               Start="0,0"
-              End="76.5873037829231,28.0101715421767">
+              End="76.5873037829231,36.0101715421767">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,10.3445043235347" />
+                    End="0,13.5761427416138" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,10.3445043235347"
-                    Point2="0,14.3445043235347"
-                    Point3="4,14.3445043235347" />
+                    Point1="0,13.5761427416138"
+                    Point2="0,17.5761427416138"
+                    Point3="4,17.5761427416138" />
                   <mssgle:LineSegment
-                    End="72.5873037829231,14.3445043235347" />
+                    End="72.5873037829231,17.5761427416138" />
                   <mssgle:CubicBezierSegment
-                    Point1="72.5873037829231,14.3445043235347"
-                    Point2="76.5873037829231,14.3445043235347"
-                    Point3="76.5873037829231,18.3445043235347" />
+                    Point1="72.5873037829231,17.5761427416138"
+                    Point2="76.5873037829231,17.5761427416138"
+                    Point3="76.5873037829231,21.5761427416138" />
                   <mssgle:LineSegment
-                    End="76.5873037829231,28.0101715421767" />
+                    End="76.5873037829231,36.0101715421767" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="3.62630814146156,19.3445043235347,69.3346875,16"
+              BoundingBox="3.62630814146156,22.5761427416138,69.3346875,16"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
@@ -2721,12 +2721,12 @@ Where pers.PersonType != 'EM'</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <AnnotationLayout
-          Text="SSIS example for loading SCD 1,2,6 attributes using AdventureWorks2022 in SQL Server 2022 and&#xA;&#xA;Microsoft Visual Studio Professional 2022 (2) Version 17.10.3 VisualStudio.17.Release/17.10.3+35013.160 Microsoft .NET Framework Version 4.8.09032&#xA;&#xA;Installed Version: Professional&#xA;&#xA;SQL Server Data Tools 17.10.172.0 Microsoft SQL Server Data Tools&#xA;&#xA;SQL Server Integration Services 16.0.5556.0 Microsoft SQL Server Integration Services Designer Version 16.0.5556.0&#xA;&#xA;Uses batch processes instead of row by row used in MS SCD wizard To use:&#xA;&#xA;Get AdventureWorks2022 here: https://learn.microsoft.com/en-us/sql/samples/adventureworks-install-configure?view=sql-server-ver16&amp;tabs=ssms&#xA;Run CreateAdventureWorksDWExtended.sql to create db on local server&#xA;Run the SetupDatabase.sql script in the solution make sure these two databases are present: AdventureWorksDWExtended and AdventureWorks2022&#xA;Get the solution Datawarehouse.sln and open&#xA;Run the setup script in the solution: SetupDatabase.sql&#xA;Go through the test steps in the teststeps.sql and note the changes that occur in dbo.DimCustomer&#xA;&#xA;Uses batch processes instead of row by row used in MS SCD wizard"
+          Text="SSIS example for loading SCD 1,2,6 attributes using AdventureWorks2022 in SQL Server 2022 and&#xA;&#xA;Microsoft Visual Studio Professional 2022 (2) Version 17.10.3 VisualStudio.17.Release/17.10.3+35013.160 Microsoft .NET Framework Version 4.8.09032&#xA;&#xA;Installed Version: Professional&#xA;&#xA;SQL Server Data Tools 17.10.172.0 Microsoft SQL Server Data Tools&#xA;&#xA;SQL Server Integration Services 16.0.5556.0 Microsoft SQL Server Integration Services Designer Version 16.0.5556.0&#xA;&#xA;Uses batch processes instead of row by row used in MS SCD wizard To use:&#xA;&#xA;1) Get AdventureWorks2022 here: https://learn.microsoft.com/en-us/sql/samples/adventureworks-install-configure?view=sql-server-ver16&amp;tabs=ssms&#xA;2) Run CreateAdventureWorksDWExtended.sql to create db on local server&#xA;3) Run the SetupDatabase.sql script in the solution make sure these two databases are present: AdventureWorksDWExtended and AdventureWorks2022&#xA;4) Get the solution Datawarehouse.sln and open&#xA;5) Run the setup script in the solution: SetupDatabase.sql&#xA;6) Go through the test steps in the teststeps.sql and note the changes that occur in dbo.DimCustomer&#xA;"
           ParentId="Package"
           FontInfo="{assembly:Null}"
-          Size="817.714285714286,343.428571428572"
+          Size="830.285714285715,327.428571428572"
           Id="005d9d47-9b22-4e3f-a48a-65310ea5e6d5"
-          TopLeft="707.222209341917,159.54544568419" />
+          TopLeft="670.555543343043,157.772718509921" />
       </GraphLayout>
     </LayoutInfo>
   </Package>
